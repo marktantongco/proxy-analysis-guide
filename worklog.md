@@ -102,3 +102,41 @@ Stage Summary:
 - All 4 skills applied: framer-motion animations, ui-ux-pro-max design system, 21st.dev patterns, builder-v2 workflow
 - 21st.dev API verified: search endpoint works, registry endpoint has 2/month free limit
 - Zero runtime errors, clean lint, responsive on all viewports
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Add 4 enhancement features: 21st.dev component search, dark mode toggle, JSON config export, WebSocket monitoring
+
+Work Log:
+- Fixed 21st.dev API route: changed from GET /api/components (404) to POST /api/search with x-api-key header
+- Added curated fallback components when API is unreachable
+- Created theme-provider.tsx with next-themes integration for dark mode
+- Built ComponentSearchSection with search, pagination, copy-to-clipboard install commands
+- Built ConfigExportSection with JSON download button and copy functionality
+- Created WebSocket mini-service (port 3030) with socket.io for live proxy monitoring
+  - Simulates GoZen + OWL-AGENT health metrics (RAM, latency, requests/min, connections)
+  - Broadcasts proxy state every 2 seconds, request logs every 3-6 seconds
+  - Occasionally simulates degraded status and circuit breaker events
+- Built MonitoringSection with:
+  - Proxy dashboard cards with live metrics, RAM progress bars, circuit breaker status
+  - Combined stack RAM indicator
+  - Real-time request log with streaming entries
+  - Graceful fallback to simulated data when WebSocket disconnected
+- Built DarkModeToggle with animated sun/moon icon swap using AnimatePresence
+- Added dark mode classes throughout existing sections (bg, text, border adaptations)
+- Updated navigation: desktop nav links + mobile hamburger + dark mode toggle
+- Added new nav items: Components, Monitor
+- All features verified via agent-browser: search returns results, dark mode toggles, monitoring shows live data
+- Lint passes clean, no runtime errors
+- Screenshots: proxy_app_v2_full.png
+
+Stage Summary:
+- 4 new features successfully integrated:
+  1. 21st.dev Component Search — live API search with 999K+ requests remaining
+  2. Dark Mode Toggle — animated sun/moon with full cascade palette dark variants
+  3. JSON Config Export — download + copy for unified stack configuration
+  4. WebSocket Monitoring — real-time proxy health dashboard with simulated metrics
+- Total sections now: 13 (9 original + 4 new)
+- Mini-service running on port 3030 (proxy-monitor)
+- Clean lint, zero errors, all interactions verified
