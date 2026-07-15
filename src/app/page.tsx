@@ -1,19 +1,27 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useAppStore, type ComponentItem } from "@/lib/store";
 import {
-  Sparkles, Layers, Zap, Palette, Search, Menu, X,
-  ArrowRight, ChevronDown, Star, Code2, Box, MousePointerClick,
-  Mail, Check, Crown, Rocket, Shield
+  Shield, Zap, Server, CheckCircle2, XCircle, ChevronDown,
+  Copy, Check, ArrowDown, Cpu, HardDrive, BarChart3, Globe,
+  Terminal, BookOpen, Layers, Star, AlertTriangle, Radio,
+  Menu, X, ExternalLink, ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import {
+  rankedProxies, deepDives, comparisonFeatures, synergyCombos,
+  gozenInstallSteps, owlInstallSteps, verificationChecklist as initialChecklist,
+  decisionTree, ramImpact, unifiedStackConfig, startupSequence, scoringWeights,
+  type ProxyRepo, type ProxyDeepDive, type ChecklistItem
+} from "@/lib/proxy-data";
 
-/* ──────────────────────────── ANIMATION VARIANTS ──────────────────────────── */
+/* ──────────────── ANIMATION PRESETS (framer-motion-animator) ──────────────── */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -22,980 +30,930 @@ const fadeUp = {
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
 };
 
 const staggerItem = {
   hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", stiffness: 300, damping: 24 },
-  },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
 };
 
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.8 },
+  hidden: { opacity: 0, scale: 0.9 },
   visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20 } },
 };
 
-const slideInLeft = {
-  hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
+/* ──────────────── DESIGN TOKENS (ui-ux-pro-max cascade palette) ──────────── */
+
+const palette = {
+  bg: "bg-[#f6f6f6]",
+  card: "bg-white",
+  header: "text-[#6b634d]",
+  accent: "text-[#92751f]",
+  accent2: "text-[#5a36c3]",
+  coverBlock: "text-[#8b7d53]",
+  muted: "text-[#86837c]",
+  success: "text-[#3f7450] bg-[#3f7450]/10",
+  warning: "text-[#ae8d4a] bg-[#ae8d4a]/10",
+  error: "text-[#8b4e49] bg-[#8b4e49]/10",
+  info: "text-[#537ba4] bg-[#537ba4]/10",
+  border: "border-[#d6d1c2]",
+  btnPrimary: "bg-[#6b634d] hover:bg-[#5a5540] text-white",
+  btnAccent: "bg-[#92751f] hover:bg-[#7a6119] text-white",
 };
 
-const slideInRight = {
-  hidden: { opacity: 0, x: 40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
-};
+/* ──────────────── HELPER: Score Color ────────────────────────────────────── */
 
-/* ──────────────────────────── FLOATING PARTICLES ──────────────────────────── */
+function scoreColor(score: number) {
+  if (score >= 9) return "text-[#3f7450]";
+  if (score >= 7.5) return "text-[#537ba4]";
+  if (score >= 6.5) return "text-[#ae8d4a]";
+  return "text-[#8b4e49]";
+}
 
-function FloatingParticles() {
+function scoreBg(score: number) {
+  if (score >= 9) return "bg-[#3f7450]/10 border-[#3f7450]/30";
+  if (score >= 7.5) return "bg-[#537ba4]/10 border-[#537ba4]/30";
+  if (score >= 6.5) return "bg-[#ae8d4a]/10 border-[#ae8d4a]/30";
+  return "bg-[#8b4e49]/10 border-[#8b4e49]/30";
+}
+
+/* ──────────────── COPY BUTTON HOOK ──────────────────────────────────────── */
+
+function useCopy() {
+  const [copied, setCopied] = useState(false);
+  const copy = useCallback((text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, []);
+  return { copied, copy };
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Hero
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function HeroSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: 20 }).map((_, i) => (
+    <section ref={ref} className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#f6f6f6]">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#92751f]/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#5a36c3]/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#6b634d]/3 rounded-full blur-3xl" />
+      </div>
+
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
+        className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center"
+      >
+        <motion.div variants={staggerItem}>
+          <Badge className="mb-4 bg-[#92751f]/10 text-[#92751f] border-[#92751f]/20 text-xs sm:text-sm px-3 py-1">
+            SMP v5.1 Protocol — 8 GB RAM Ubuntu
+          </Badge>
+        </motion.div>
+
+        <motion.h1
+          variants={staggerItem}
+          className="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#151513] leading-tight tracking-tight"
+        >
+          Comprehensive Proxy
+          <br />
+          <span className="text-[#92751f]">Analysis & Guide</span>
+        </motion.h1>
+
+        <motion.p variants={staggerItem} className="mt-4 sm:mt-6 text-base sm:text-lg text-[#86837c] max-w-2xl mx-auto leading-relaxed">
+          10 open-source AI proxies ranked, deep-dived, and compared.
+          Interactive installation guide for your 8 GB RAM Ubuntu system.
+        </motion.p>
+
+        {/* Key Stats */}
         <motion.div
-          key={i}
-          className="absolute rounded-full bg-white/10"
-          style={{
-            width: Math.random() * 6 + 2,
-            height: Math.random() * 6 + 2,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            x: [0, Math.random() * 20 - 10, 0],
-            opacity: [0.3, 0.8, 0.3],
-          }}
-          transition={{
-            duration: Math.random() * 4 + 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: Math.random() * 2,
-          }}
-        />
-      ))}
+          variants={staggerContainer}
+          className="mt-8 sm:mt-12 grid grid-cols-3 gap-3 sm:gap-6 max-w-lg mx-auto"
+        >
+          {[
+            { value: "9.4", label: "GoZen", sub: "#1 Overall" },
+            { value: "8.7", label: "routatic", sub: "#2 macOS" },
+            { value: "7.7", label: "OWL-AGENT", sub: "#3 Hardware" },
+          ].map((stat) => (
+            <motion.div key={stat.label} variants={staggerItem} className="text-center">
+              <div className={`text-2xl sm:text-4xl font-bold ${scoreColor(parseFloat(stat.value))}`}>
+                {stat.value}
+              </div>
+              <div className="text-xs sm:text-sm font-medium text-[#6b634d] mt-1">{stat.label}</div>
+              <div className="text-xs text-[#86837c]">{stat.sub}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div variants={staggerItem} className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 justify-center">
+          <Button className={`${palette.btnPrimary} rounded-full px-6 sm:px-8 py-3 text-sm sm:text-base`} onClick={() => document.getElementById("ranked")?.scrollIntoView({ behavior: "smooth" })}>
+            View Rankings <ArrowDown className="ml-2 h-4 w-4" />
+          </Button>
+          <Button variant="outline" className={`${palette.border} rounded-full px-6 sm:px-8 py-3 text-sm sm:text-base`} onClick={() => document.getElementById("install")?.scrollIntoView({ behavior: "smooth" })}>
+            Installation Guide <Terminal className="ml-2 h-4 w-4" />
+          </Button>
+        </motion.div>
+
+        {/* Best Synergy Badge */}
+        <motion.div variants={staggerItem} className="mt-8">
+          <div className="inline-flex items-center gap-2 bg-[#3f7450]/10 border border-[#3f7450]/20 rounded-full px-4 py-2 text-sm">
+            <Star className="h-4 w-4 text-[#3f7450]" />
+            <span className="text-[#3f7450] font-medium">Best Synergy: GoZen + OWL-AGENT — 9.2/10</span>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        animate={{ y: [0, 8, 0] }}
+        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <ChevronDown className="h-6 w-6 text-[#86837c]" />
+      </motion.div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Scoring Methodology
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function MethodologySection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  return (
+    <section ref={ref} className="py-12 sm:py-20 bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">Scoring Methodology</h2>
+          <p className="text-[#86837c] mb-8 text-sm sm:text-base">Weighted criteria optimized for resource-constrained 8 GB RAM systems</p>
+        </motion.div>
+
+        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="grid grid-cols-1 sm:grid-cols-5 gap-3 sm:gap-4">
+          {scoringWeights.map((w) => (
+            <motion.div key={w.criterion} variants={staggerItem}>
+              <Card className={`${palette.card} border ${palette.border} h-full`}>
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#92751f]">{w.weight}%</div>
+                  <div className="text-sm font-semibold text-[#6b634d] mt-1">{w.criterion}</div>
+                  <div className="text-xs text-[#86837c] mt-1">{w.description}</div>
+                  <Progress value={w.weight} className="mt-3 h-2" />
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Ranked Table
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function RankedSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [expanded, setExpanded] = useState<number | null>(null);
+
+  return (
+    <section id="ranked" ref={ref} className="py-12 sm:py-20 bg-[#f6f6f6]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">All 10 Proxies Ranked</h2>
+          <p className="text-[#86837c] mb-8 text-sm sm:text-base">Click any proxy to see details. Weighted scoring: Memory 40%, Features 25%, Maintenance 15%, Setup 10%, Unique Value 10%</p>
+        </motion.div>
+
+        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-3">
+          {rankedProxies.map((proxy) => (
+            <motion.div key={proxy.name} variants={staggerItem}>
+              <Card
+                className={`${palette.card} border ${palette.border} cursor-pointer transition-shadow hover:shadow-md`}
+                onClick={() => setExpanded(expanded === proxy.rank ? null : proxy.rank)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold ${scoreBg(proxy.score)}`}>
+                        <span className={scoreColor(proxy.score)}>{proxy.rank}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-[#151513] text-sm sm:text-base">{proxy.name}</span>
+                          <Badge variant="outline" className="text-xs">{proxy.language}</Badge>
+                          <Badge variant="outline" className="text-xs border-[#3f7450]/30 text-[#3f7450]">{proxy.estRam}</Badge>
+                        </div>
+                        <p className="text-xs sm:text-sm text-[#86837c] mt-0.5 truncate">{proxy.description}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className={`text-xl sm:text-2xl font-bold ${scoreColor(proxy.score)}`}>{proxy.score}</span>
+                      <ChevronDown className={`h-5 w-5 text-[#86837c] transition-transform ${expanded === proxy.rank ? "rotate-180" : ""}`} />
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {expanded === proxy.rank && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <Separator className="my-3 bg-[#d6d1c2]" />
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          <div className="text-center p-2 rounded-lg bg-[#f6f6f6]">
+                            <div className="text-lg font-bold text-[#92751f]">{proxy.features}/10</div>
+                            <div className="text-xs text-[#86837c]">Features</div>
+                          </div>
+                          <div className="text-center p-2 rounded-lg bg-[#f6f6f6]">
+                            <div className="text-lg font-bold text-[#537ba4]">{proxy.maintenance}/10</div>
+                            <div className="text-xs text-[#86837c]">Maintenance</div>
+                          </div>
+                          <div className="text-center p-2 rounded-lg bg-[#f6f6f6]">
+                            <div className="text-lg font-bold text-[#3f7450]">{proxy.setup}/10</div>
+                            <div className="text-xs text-[#86837c]">Setup</div>
+                          </div>
+                          <div className="text-center p-2 rounded-lg bg-[#f6f6f6]">
+                            <div className="text-lg font-bold text-[#6b634d]">{proxy.estRam}</div>
+                            <div className="text-xs text-[#86837c]">Est. RAM</div>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-sm text-[#6b634d]">
+                          <strong>Unique Value:</strong> {proxy.uniqueValue}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Deep Dives
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function DeepDiveCard({ dive }: { dive: ProxyDeepDive }) {
+  const [activeTab, setActiveTab] = useState("features");
+  const { copied, copy } = useCopy();
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  return (
+    <motion.div ref={ref} variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+      <Card className={`${palette.card} border ${palette.border} overflow-hidden`}>
+        <CardHeader className="pb-3 bg-gradient-to-r from-[#f6f6f6] to-white">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <CardTitle className="text-lg sm:text-xl text-[#6b634d]">{dive.name}</CardTitle>
+              <CardDescription className="text-[#92751f] font-medium">{dive.tagline}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 sm:p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4 bg-[#f6f6f6] h-auto">
+              <TabsTrigger value="features" className="text-xs sm:text-sm py-2">Features</TabsTrigger>
+              <TabsTrigger value="architecture" className="text-xs sm:text-sm py-2">Architecture</TabsTrigger>
+              <TabsTrigger value="ram" className="text-xs sm:text-sm py-2">RAM</TabsTrigger>
+              <TabsTrigger value="pros-cons" className="text-xs sm:text-sm py-2">Pros/Cons</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="features" className="mt-4">
+              <div className="space-y-2">
+                {dive.features.map((f, i) => (
+                  <motion.div
+                    key={f.title}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="flex gap-3 p-2 rounded-lg hover:bg-[#f6f6f6] transition-colors"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-[#3f7450] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <span className="font-medium text-sm text-[#151513]">{f.title}:</span>{" "}
+                      <span className="text-sm text-[#86837c]">{f.detail}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              <div className="mt-4">
+                <p className="text-xs text-[#86837c] mb-1">Quick Install:</p>
+                <div className="relative bg-[#1a1a2e] text-[#e0e0e0] rounded-lg p-3 font-mono text-xs sm:text-sm overflow-x-auto">
+                  <code>{dive.installCmd}</code>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-1 right-1 h-7 w-7 p-0 text-[#86837c] hover:text-white"
+                    onClick={(e) => { e.stopPropagation(); copy(dive.installCmd); }}
+                  >
+                    {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="architecture" className="mt-4">
+              <p className="text-sm text-[#151513] leading-relaxed">{dive.architecture}</p>
+            </TabsContent>
+
+            <TabsContent value="ram" className="mt-4">
+              <div className="flex items-start gap-3 mb-4">
+                <Cpu className="h-5 w-5 text-[#92751f] flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-[#151513] leading-relaxed">{dive.ramDetail}</p>
+              </div>
+              <div className="bg-[#f6f6f6] rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <HardDrive className="h-4 w-4 text-[#6b634d]" />
+                  <span className="text-sm font-medium text-[#6b634d]">Memory Footprint</span>
+                </div>
+                <div className="w-full bg-[#d6d1c2] rounded-full h-4 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: dive.name === "OWL-AGENT" ? "65%" : "25%" }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className={`h-full rounded-full ${dive.name === "OWL-AGENT" ? "bg-[#ae8d4a]" : "bg-[#3f7450]"}`}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-[#86837c] mt-1">
+                  <span>0 MB</span>
+                  <span>{dive.name === "OWL-AGENT" ? "120 MB" : "50 MB"}</span>
+                  <span>400 MB</span>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="pros-cons" className="mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-semibold text-[#3f7450] mb-2 flex items-center gap-1">
+                    <CheckCircle2 className="h-4 w-4" /> Pros
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {dive.pros.map((p) => (
+                      <li key={p} className="text-xs sm:text-sm text-[#151513] flex gap-2">
+                        <span className="text-[#3f7450]">+</span> {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-[#8b4e49] mb-2 flex items-center gap-1">
+                    <XCircle className="h-4 w-4" /> Cons
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {dive.cons.map((c) => (
+                      <li key={c} className="text-xs sm:text-sm text-[#151513] flex gap-2">
+                        <span className="text-[#8b4e49]">-</span> {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+function DeepDivesSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  return (
+    <section ref={ref} className="py-12 sm:py-20 bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">Deep Dives: Top 3 Proxies</h2>
+          <p className="text-[#86837c] mb-8 text-sm sm:text-base">Full architecture, features, RAM analysis, and honest limitations</p>
+        </motion.div>
+        <div className="space-y-6">
+          {deepDives.map((dive) => (
+            <DeepDiveCard key={dive.name} dive={dive} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Comparison Matrix
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function ComparisonSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [highlight, setHighlight] = useState<string | null>(null);
+
+  return (
+    <section ref={ref} className="py-12 sm:py-20 bg-[#f6f6f6]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">Feature Comparison</h2>
+          <p className="text-[#86837c] mb-6 text-sm sm:text-base">GoZen vs routatic-proxy vs OWL-AGENT — tap a row to highlight</p>
+        </motion.div>
+
+        <motion.div variants={scaleIn} initial="hidden" animate={isInView ? "visible" : "hidden"} className="overflow-x-auto -mx-4 px-4">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-[#6b634d] text-white">
+                <th className="p-3 text-left rounded-tl-lg font-medium">Feature</th>
+                <th className="p-3 text-center font-medium">GoZen</th>
+                <th className="p-3 text-center font-medium">routatic</th>
+                <th className="p-3 text-center rounded-tr-lg font-medium">OWL-AGENT</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonFeatures.map((row, i) => {
+                const isHl = highlight === row.feature;
+                return (
+                  <tr
+                    key={row.feature}
+                    onClick={() => setHighlight(isHl ? null : row.feature)}
+                    className={`cursor-pointer transition-colors border-b border-[#d6d1c2]/50 ${isHl ? "bg-[#92751f]/10" : i % 2 === 0 ? "bg-white" : "bg-[#f6f6f6]"} hover:bg-[#92751f]/5`}
+                  >
+                    <td className="p-2 sm:p-3 font-medium text-[#6b634d] text-xs sm:text-sm">{row.feature}</td>
+                    <td className="p-2 sm:p-3 text-center text-xs sm:text-sm">
+                      {row.gozen === "Yes" || row.gozen.startsWith("Yes") ? (
+                        <span className="text-[#3f7450] font-medium">{row.gozen}</span>
+                      ) : row.gozen === "No" ? (
+                        <span className="text-[#8b4e49]">{row.gozen}</span>
+                      ) : (
+                        <span className="text-[#537ba4]">{row.gozen}</span>
+                      )}
+                    </td>
+                    <td className="p-2 sm:p-3 text-center text-xs sm:text-sm">
+                      {row.routatic === "Yes" || row.routatic.startsWith("Yes") ? (
+                        <span className="text-[#3f7450] font-medium">{row.routatic}</span>
+                      ) : row.routatic === "No" ? (
+                        <span className="text-[#8b4e49]">{row.routatic}</span>
+                      ) : (
+                        <span className="text-[#537ba4]">{row.routatic}</span>
+                      )}
+                    </td>
+                    <td className="p-2 sm:p-3 text-center text-xs sm:text-sm">
+                      {row.owl === "Yes" || row.owl.startsWith("Yes") ? (
+                        <span className="text-[#3f7450] font-medium">{row.owl}</span>
+                      ) : row.owl === "No" ? (
+                        <span className="text-[#8b4e49]">{row.owl}</span>
+                      ) : (
+                        <span className="text-[#537ba4]">{row.owl}</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Synergy Assessment
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function SynergySection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  return (
+    <section ref={ref} className="py-12 sm:py-20 bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">Synergy Assessment</h2>
+          <p className="text-[#86837c] mb-8 text-sm sm:text-base">Which stack combination delivers the best combined value?</p>
+        </motion.div>
+
+        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-4">
+          {synergyCombos.map((combo, i) => (
+            <motion.div key={combo.combo} variants={staggerItem}>
+              <Card className={`${palette.card} border ${i === 0 ? "border-[#3f7450]/40 bg-[#3f7450]/5" : palette.border}`}>
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-3">
+                      {i === 0 && <Star className="h-5 w-5 text-[#3f7450]" />}
+                      {i === 1 && <AlertTriangle className="h-5 w-5 text-[#ae8d4a]" />}
+                      {i === 2 && <Zap className="h-5 w-5 text-[#537ba4]" />}
+                      <span className="font-semibold text-[#151513] text-sm sm:text-base">{combo.combo}</span>
+                    </div>
+                    <span className={`text-xl sm:text-2xl font-bold ${i === 0 ? "text-[#3f7450]" : i === 1 ? "text-[#ae8d4a]" : "text-[#537ba4]"}`}>
+                      {combo.score}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-[#86837c] mt-2">{combo.assessment}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Why GoZen + OWL-AGENT */}
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mt-8">
+          <Card className="border-[#3f7450]/30 bg-[#3f7450]/5">
+            <CardContent className="p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-[#3f7450] mb-3">Why GoZen + OWL-AGENT Wins</h3>
+              <div className="space-y-3 text-sm text-[#151513] leading-relaxed">
+                <p>GoZen provides the feature breadth (scenario routing, budget controls, Web UI, context compression, Bot Gateway) that OWL-AGENT lacks, while OWL-AGENT provides the security (SSRF allowlist) and proactive resilience (predictive circuit breaker, mesh health) that GoZen lacks.</p>
+                <p>When layered together, GoZen acts as the primary proxy handling request routing, failover, and management, while OWL-AGENT acts as a security and observability layer between GoZen and upstream providers. Combined RAM: <strong>110-170 MB</strong> (~2.1% of 8 GB).</p>
+              </div>
+              <div className="mt-4 flex items-center gap-2 text-xs text-[#3f7450]">
+                <Layers className="h-4 w-4" />
+                <span>Request flow: Claude Code → GoZen (19841) → OWL-AGENT (60000) → Upstream</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Installation Guide
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function CodeBlock({ code }: { code: string }) {
+  const { copied, copy } = useCopy();
+
+  return (
+    <div className="relative bg-[#1a1a2e] text-[#e0e0e0] rounded-lg p-3 font-mono text-xs sm:text-sm overflow-x-auto group">
+      <code className="whitespace-pre-wrap break-all">{code}</code>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="absolute top-1 right-1 h-7 w-7 p-0 text-[#86837c] hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={() => copy(code)}
+      >
+        {copied ? <Check className="h-3.5 w-3.5 text-[#3f7450]" /> : <Copy className="h-3.5 w-3.5" />}
+      </Button>
     </div>
   );
 }
 
-/* ──────────────────────────── ANIMATED COUNTER ──────────────────────────── */
-
-function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const duration = 2000;
-    const increment = target / (duration / 16);
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
-    return () => clearInterval(timer);
-  }, [isInView, target]);
-
+function InstallStepCard({ step, accentColor }: { step: { step: number; title: string; command: string; explanation: string }; accentColor: string }) {
   return (
-    <span ref={ref} className="tabular-nums">
-      {count.toLocaleString()}{suffix}
-    </span>
+    <div className="flex gap-3 sm:gap-4">
+      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${accentColor}`}>
+        {step.step}
+      </div>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-semibold text-[#151513] text-sm">{step.title}</h4>
+        <CodeBlock code={step.command} />
+        <p className="text-xs text-[#86837c] mt-1.5">{step.explanation}</p>
+      </div>
+    </div>
   );
 }
 
-/* ──────────────────────────── NAVBAR ──────────────────────────── */
-
-function Navbar() {
-  const { mobileMenuOpen, setMobileMenuOpen } = useAppStore();
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const navLinks = [
-    { label: "Features", href: "#features" },
-    { label: "Components", href: "#components" },
-    { label: "Skills", href: "#skills" },
-    { label: "Pricing", href: "#pricing" },
-  ];
+function InstallSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [activeGuide, setActiveGuide] = useState<"gozen" | "owl">("gozen");
+  const { copied: configCopied, copy: configCopy } = useCopy();
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 200, damping: 25 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl shadow-sm" : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <motion.div
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-lg bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-              SkillForge
-            </span>
-          </motion.div>
+    <section id="install" ref={ref} className="py-12 sm:py-20 bg-[#f6f6f6]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">Step-by-Step Installation</h2>
+          <p className="text-[#86837c] mb-6 text-sm sm:text-base">Copy-paste commands for your 8 GB RAM Ubuntu system</p>
+        </motion.div>
 
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <motion.a
-                key={link.label}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                whileHover={{ y: -1 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                {link.label}
-              </motion.a>
-            ))}
-          </div>
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <Tabs value={activeGuide} onValueChange={(v) => setActiveGuide(v as "gozen" | "owl")}>
+            <TabsList className="grid w-full grid-cols-2 bg-white border border-[#d6d1c2] h-auto mb-6">
+              <TabsTrigger value="gozen" className="py-2.5 text-sm">GoZen (Primary)</TabsTrigger>
+              <TabsTrigger value="owl" className="py-2.5 text-sm">OWL-AGENT (Secondary)</TabsTrigger>
+            </TabsList>
 
-          <div className="flex items-center gap-2">
-            <motion.div whileTap={{ scale: 0.95 }}>
-              <Button
-                size="sm"
-                className="hidden sm:flex bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0 shadow-lg shadow-amber-500/25"
-              >
-                Get Started
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </motion.div>
-
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              className="md:hidden p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </motion.button>
-          </div>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800"
-          >
-            <div className="px-4 py-3 space-y-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="block px-4 py-3 text-base font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </a>
+            <TabsContent value="gozen" className="space-y-4">
+              {gozenInstallSteps.map((step) => (
+                <InstallStepCard key={step.step} step={step} accentColor="bg-[#6b634d]" />
               ))}
-              <Button className="w-full mt-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0">
-                Get Started
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
-  );
-}
+            </TabsContent>
 
-/* ──────────────────────────── HERO ──────────────────────────── */
-
-function Hero() {
-  return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900" />
-      <div className="absolute inset-0 bg-gradient-to-t from-amber-500/5 via-transparent to-orange-500/5" />
-      <FloatingParticles />
-
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center pt-20 pb-12">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="space-y-6"
-        >
-          <motion.div variants={staggerItem}>
-            <Badge
-              variant="secondary"
-              className="bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 px-4 py-1.5 text-sm"
-            >
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-              Powered by SMP v5.1 Protocol
-            </Badge>
-          </motion.div>
-
-          <motion.h1
-            variants={staggerItem}
-            className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight"
-          >
-            <span className="text-white">Build with</span>
-            <br />
-            <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-              Agent Skills
-            </span>
-          </motion.h1>
-
-          <motion.p
-            variants={staggerItem}
-            className="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed"
-          >
-            Discover, compose, and deploy AI agent skills with Framer Motion animations,
-            21st.dev crafted components, and mobile-first design. Your workflow, unified.
-          </motion.p>
-
-          <motion.div
-            variants={staggerItem}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
-          >
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0 shadow-2xl shadow-amber-500/25 px-8 text-base"
-              >
-                <Rocket className="w-5 h-5 mr-2" />
-                Explore Skills
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800 hover:text-white px-8 text-base"
-              >
-                <Code2 className="w-5 h-5 mr-2" />
-                View Components
-              </Button>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            variants={staggerItem}
-            className="flex items-center justify-center gap-6 pt-6 text-sm text-zinc-500"
-          >
-            <div className="flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-emerald-400" />
-              Mobile-First
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-emerald-400" />
-              Framer Motion
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-emerald-400" />
-              21st.dev
-            </div>
-          </motion.div>
+            <TabsContent value="owl" className="space-y-4">
+              {owlInstallSteps.map((step) => (
+                <InstallStepCard key={step.step} step={step} accentColor="bg-[#5a36c3]" />
+              ))}
+            </TabsContent>
+          </Tabs>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.5, duration: 0.8 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <ChevronDown className="w-6 h-6 text-zinc-500" />
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── STATS ──────────────────────────── */
-
-function Stats() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  const stats = [
-    { value: 100, suffix: "+", label: "Agent Skills", icon: Layers },
-    { value: 50, suffix: "+", label: "UI Components", icon: Box },
-    { value: 99, suffix: "%", label: "Mobile Ready", icon: MousePointerClick },
-    { value: 10, suffix: "x", label: "Faster Dev", icon: Zap },
-  ];
-
-  return (
-    <section ref={ref} className="py-16 sm:py-20 bg-zinc-50 dark:bg-zinc-900/50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
-        >
-          {stats.map((stat) => (
-            <motion.div
-              key={stat.label}
-              variants={staggerItem}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="text-center p-6 rounded-2xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 shadow-sm"
-            >
-              <stat.icon className="w-6 h-6 mx-auto mb-3 text-amber-500" />
-              <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+        {/* Unified Stack Config */}
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mt-10">
+          <Card className="border-[#3f7450]/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base sm:text-lg text-[#3f7450] flex items-center gap-2">
+                <Layers className="h-5 w-5" /> Unified Stack Configuration
+              </CardTitle>
+              <CardDescription>GoZen → OWL-AGENT → Upstream wiring in ~/.zen/zen.json</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <CodeBlock code={unifiedStackConfig} />
               </div>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{stat.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── FEATURES ──────────────────────────── */
-
-function Features() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
-  const features = [
-    {
-      icon: Sparkles,
-      title: "Framer Motion Animations",
-      description:
-        "Smooth page transitions, staggered reveals, gesture-driven interactions, and scroll-triggered animations that make your UI feel alive and responsive.",
-      color: "from-amber-500 to-orange-500",
-    },
-    {
-      icon: Palette,
-      title: "21st.dev Components",
-      description:
-        "Hand-crafted React components from the 21st.dev registry. No generic AI slop — every component is designed with taste, built for production use.",
-      color: "from-emerald-500 to-teal-500",
-    },
-    {
-      icon: Layers,
-      title: "UI/UX Pro Max",
-      description:
-        "Mobile-first responsive design with proper touch targets, semantic HTML, ARIA accessibility, keyboard navigation, and dark mode support out of the box.",
-      color: "from-violet-500 to-purple-500",
-    },
-    {
-      icon: Zap,
-      title: "21st Builder v2",
-      description:
-        "Component composition and building patterns that let you assemble complex interfaces from simple, reusable building blocks with type safety.",
-      color: "from-rose-500 to-pink-500",
-    },
-    {
-      icon: Shield,
-      title: "SMP v5.1 Protocol",
-      description:
-        "Orchestrated workflow with quality gates at every stage: discovery, brainstorming, research, planning, execution, validation, and review.",
-      color: "from-sky-500 to-cyan-500",
-    },
-    {
-      icon: Code2,
-      title: "find-skills CLI",
-      description:
-        "Discover and install agent skills from the open ecosystem. Version-locked toolsets, quality verification, and one-command installation.",
-      color: "from-indigo-500 to-blue-500",
-    },
-  ];
-
-  return (
-    <section id="features" ref={ref} className="py-20 sm:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 sm:mb-16"
-        >
-          <Badge variant="secondary" className="mb-4 bg-amber-500/10 text-amber-600 border-amber-500/20">
-            Features
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white">
-            Everything You Need
-          </h2>
-          <p className="mt-4 text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-            Six specialized agent skills working in concert to deliver production-ready,
-            beautifully animated, mobile-first web applications.
-          </p>
-        </motion.div>
-
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-        >
-          {features.map((feature) => (
-            <motion.div key={feature.title} variants={staggerItem} whileHover={{ y: -6 }}>
-              <Card className="h-full border-zinc-200 dark:border-zinc-700/50 hover:shadow-lg transition-shadow duration-300">
-                <CardHeader>
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-3 shadow-lg`}
-                  >
-                    <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-sm leading-relaxed">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── COMPONENT BROWSER ──────────────────────────── */
-
-function ComponentBrowser() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-  const { components, setComponents, searchQuery, setSearchQuery, selectedCategory, setSelectedCategory } = useAppStore();
-  const [loading, setLoading] = useState(true);
-
-  const categories = ["all", "hero", "features", "stats", "social-proof", "pricing", "cta", "navigation"];
-
-  useEffect(() => {
-    async function fetchComponents() {
-      try {
-        const res = await fetch("/api/components");
-        const data = await res.json();
-        const items = data.components || [];
-        setComponents(items);
-      } catch {
-        setComponents([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchComponents();
-  }, [setComponents]);
-
-  const filtered = components.filter((c: ComponentItem) => {
-    const matchSearch =
-      !searchQuery ||
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchCategory = selectedCategory === "all" || c.category === selectedCategory;
-    return matchSearch && matchCategory;
-  });
-
-  return (
-    <section id="components" ref={ref} className="py-20 sm:py-28 bg-zinc-50 dark:bg-zinc-900/50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10"
-        >
-          <Badge variant="secondary" className="mb-4 bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-            21st.dev Registry
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white">
-            Component Browser
-          </h2>
-          <p className="mt-4 text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-            Browse and search crafted React components from the 21st.dev ecosystem.
-            Every component is hand-crafted, not AI slop.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.2 }}
-          className="mb-8"
-        >
-          <div className="relative max-w-md mx-auto mb-6">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-            <Input
-              placeholder="Search components..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700"
-            />
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2">
-            {categories.map((cat) => (
-              <motion.button
-                key={cat}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
-                  selectedCategory === cat
-                    ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
-                    : "bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700"
-                }`}
-              >
-                {cat.charAt(0).toUpperCase() + cat.slice(1).replace("-", " ")}
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-
-        {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-48 rounded-2xl bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-          >
-            {filtered.map((comp: ComponentItem) => (
-              <motion.div key={comp.id} variants={staggerItem} whileHover={{ y: -4, scale: 1.01 }}>
-                <Card className="h-full border-zinc-200 dark:border-zinc-700/50 hover:shadow-lg transition-all duration-300 group cursor-pointer">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
-                        <Box className="w-5 h-5 text-white" />
-                      </div>
-                      <Badge variant="outline" className="text-xs border-zinc-300 dark:border-zinc-600">
-                        {comp.category}
-                      </Badge>
+              <div className="mt-4 space-y-2">
+                <p className="text-xs text-[#86837c] font-medium">STARTUP SEQUENCE (always start OWL-AGENT first):</p>
+                {startupSequence.map((s) => (
+                  <div key={s.step} className="flex items-start gap-2">
+                    <Badge variant="outline" className="text-xs flex-shrink-0">Step {s.step}</Badge>
+                    <div>
+                      <code className="text-xs bg-[#1a1a2e] text-[#e0e0e0] px-1.5 py-0.5 rounded">{s.cmd}</code>
+                      <p className="text-xs text-[#86837c] mt-0.5">{s.desc}</p>
                     </div>
-                    <CardTitle className="text-base mt-3 group-hover:text-amber-600 transition-colors">
-                      {comp.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-sm leading-relaxed mb-3">
-                      {comp.description}
-                    </CardDescription>
-                    <div className="flex flex-wrap gap-1.5">
-                      {comp.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* RAM Impact Table */}
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mt-8">
+          <Card className={`${palette.card} border ${palette.border}`}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base sm:text-lg text-[#6b634d] flex items-center gap-2">
+                <Cpu className="h-5 w-5" /> Combined Stack RAM Impact
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {ramImpact.map((item) => (
+                  <div key={item.component} className="flex items-center justify-between p-3 rounded-lg bg-[#f6f6f6]">
+                    <div>
+                      <div className="text-sm font-medium text-[#151513]">{item.component}</div>
+                      <div className="text-xs text-[#86837c]">{item.purpose}</div>
+                    </div>
+                    <Badge variant="outline" className="text-sm font-bold border-[#92751f]/30 text-[#92751f]">{item.ram}</Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Decision Tree
+   ════════════════════════════════════════════════════════════════════════════ */
+
+function DecisionTreeSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [answers, setAnswers] = useState<Record<number, "yes" | "no">>({});
+
+  const toggle = (idx: number, val: "yes" | "no") => {
+    setAnswers((prev) => {
+      const next = { ...prev };
+      if (next[idx] === val) {
+        delete next[idx];
+      } else {
+        next[idx] = val;
+      }
+      return next;
+    });
+  };
+
+  return (
+    <section ref={ref} className="py-12 sm:py-20 bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">Decision Tree</h2>
+          <p className="text-[#86837c] mb-8 text-sm sm:text-base">Answer questions to find the right proxy configuration for your needs</p>
+        </motion.div>
+
+        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-3">
+          {decisionTree.map((node, i) => {
+            const selected = answers[i];
+            return (
+              <motion.div key={i} variants={staggerItem}>
+                <Card className={`${palette.card} border ${palette.border}`}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <ChevronRight className="h-5 w-5 text-[#92751f] flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-medium text-sm sm:text-base text-[#151513]">{node.question}</p>
+                        <div className="flex gap-2 mt-2 flex-wrap">
+                          <Button
+                            size="sm"
+                            variant={selected === "yes" ? "default" : "outline"}
+                            className={selected === "yes" ? `${palette.btnPrimary} text-xs` : `${palette.border} text-xs`}
+                            onClick={() => toggle(i, "yes")}
+                          >
+                            YES
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant={selected === "no" ? "default" : "outline"}
+                            className={selected === "no" ? "bg-[#5a36c3] hover:bg-[#4a2da3] text-white text-xs" : `${palette.border} text-xs`}
+                            onClick={() => toggle(i, "no")}
+                          >
+                            NO
+                          </Button>
+                        </div>
+                        <AnimatePresence>
+                          {selected && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0 }}
+                              className="mt-2 p-2 rounded-lg bg-[#f6f6f6] text-xs sm:text-sm"
+                            >
+                              <span className="font-medium text-[#92751f]">{selected === "yes" ? "→ YES:" : "→ NO:"}</span>{" "}
+                              <span className="text-[#151513]">{selected === "yes" ? node.yes : node.no}</span>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
-            ))}
-          </motion.div>
-        )}
-
-        {filtered.length === 0 && !loading && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-            <Search className="w-12 h-12 mx-auto text-zinc-300 dark:text-zinc-600 mb-4" />
-            <p className="text-zinc-500 dark:text-zinc-400">No components found. Try a different search.</p>
-          </motion.div>
-        )}
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );
 }
 
-/* ──────────────────────────── SKILLS SHOWCASE ──────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Verification Checklist
+   ════════════════════════════════════════════════════════════════════════════ */
 
-function SkillsShowcase() {
+function ChecklistSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [items, setItems] = useState<ChecklistItem[]>(initialChecklist);
 
-  const skills = [
-    {
-      name: "framer-motion-animator",
-      source: "patricio0312rev/skills",
-      description: "Smooth animations, page transitions, gesture-driven interactions, and orchestrated staggered sequences.",
-      installCmd: "npx skills add patricio0312rev/skills --skill framer-motion-animator",
-      color: "from-amber-500 to-orange-500",
-    },
-    {
-      name: "ui-ux-pro-max",
-      source: "nextlevelbuilder/ui-ux-pro-max-skill",
-      description: "Mobile-first responsive design with accessibility, touch targets, semantic HTML, and dark mode.",
-      installCmd: "npx skills add nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max",
-      color: "from-emerald-500 to-teal-500",
-    },
-    {
-      name: "21st-dev-components",
-      source: "21st-dev/registry",
-      description: "Hand-crafted React components from the 21st.dev registry. No AI slop — real design taste.",
-      installCmd: "npx skills add 21st-dev/registry --skill 21st-dev-components",
-      color: "from-violet-500 to-purple-500",
-    },
-    {
-      name: "21st-dev-builder-v2",
-      source: "trin-zenityx/21st-dev-builder-v2",
-      description: "Component composition patterns for building complex interfaces from simple, type-safe building blocks.",
-      installCmd: "npx skills add trin-zenityx/21st-dev-builder-v2 --skill 21st-dev-builder-v2",
-      color: "from-rose-500 to-pink-500",
-    },
-  ];
-
-  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
-
-  const handleCopy = (text: string, idx: number) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIdx(idx);
-    setTimeout(() => setCopiedIdx(null), 2000);
+  const toggleItem = (idx: number) => {
+    setItems((prev) => prev.map((item, i) => i === idx ? { ...item, done: !item.done } : item));
   };
 
-  return (
-    <section id="skills" ref={ref} className="py-20 sm:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <Badge variant="secondary" className="mb-4 bg-violet-500/10 text-violet-600 border-violet-500/20">
-            Agent Skills
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white">
-            Skills Powering This App
-          </h2>
-          <p className="mt-4 text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-            Each skill was discovered via find-skills, verified against the skills.sh leaderboard,
-            and installed with one command. Click to copy.
-          </p>
-        </motion.div>
-
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid sm:grid-cols-2 gap-4 sm:gap-6"
-        >
-          {skills.map((skill, idx) => (
-            <motion.div key={skill.name} variants={staggerItem} whileHover={{ y: -4 }}>
-              <Card className="h-full border-zinc-200 dark:border-zinc-700/50 hover:shadow-lg transition-all duration-300">
-                <CardHeader>
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`w-10 h-10 rounded-lg bg-gradient-to-br ${skill.color} flex items-center justify-center shadow-md shrink-0`}
-                    >
-                      <Code2 className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">{skill.name}</CardTitle>
-                      <p className="text-xs text-zinc-400 mt-0.5 font-mono">{skill.source}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <CardDescription className="text-sm leading-relaxed">
-                    {skill.description}
-                  </CardDescription>
-                  <button
-                    onClick={() => handleCopy(skill.installCmd, idx)}
-                    className="w-full text-left px-3 py-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-xs font-mono text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex items-center justify-between gap-2"
-                  >
-                    <span className="truncate">{skill.installCmd}</span>
-                    {copiedIdx === idx ? (
-                      <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                    ) : (
-                      <Box className="w-4 h-4 shrink-0 opacity-50" />
-                    )}
-                  </button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── PRICING ──────────────────────────── */
-
-function Pricing() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
-  const plans = [
-    {
-      name: "Starter",
-      price: "Free",
-      description: "Perfect for exploring agent skills and building your first project.",
-      features: ["5 component downloads/mo", "Community support", "Basic animations", "Mobile-first templates"],
-      icon: Zap,
-      color: "border-zinc-200 dark:border-zinc-700",
-      btnClass: "border-zinc-300 dark:border-zinc-600",
-    },
-    {
-      name: "Pro",
-      price: "$29",
-      description: "For serious builders who need full access to the ecosystem.",
-      features: [
-        "Unlimited downloads",
-        "Priority support",
-        "All animation presets",
-        "21st.dev API access",
-        "Custom skill creation",
-        "Team collaboration",
-      ],
-      icon: Crown,
-      color: "border-amber-500/50 shadow-xl shadow-amber-500/10",
-      btnClass: "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg shadow-amber-500/25",
-      popular: true,
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      description: "For teams that need governance, security, and dedicated support.",
-      features: [
-        "Everything in Pro",
-        "SSO & RBAC",
-        "Audit logs",
-        "SLA guarantee",
-        "Custom integrations",
-        "Dedicated CSM",
-      ],
-      icon: Shield,
-      color: "border-zinc-200 dark:border-zinc-700",
-      btnClass: "border-zinc-300 dark:border-zinc-600",
-    },
-  ];
+  const doneCount = items.filter((i) => i.done).length;
+  const progress = (doneCount / items.length) * 100;
 
   return (
-    <section id="pricing" ref={ref} className="py-20 sm:py-28 bg-zinc-50 dark:bg-zinc-900/50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <Badge variant="secondary" className="mb-4 bg-rose-500/10 text-rose-600 border-rose-500/20">
-            Pricing
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="mt-4 text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-            Start free. Scale when you need to. No hidden fees, no surprises.
-          </p>
+    <section ref={ref} className="py-12 sm:py-20 bg-[#f6f6f6]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] mb-2">Verification Checklist</h2>
+          <p className="text-[#86837c] mb-4 text-sm sm:text-base">Check off each item after installation to verify your stack</p>
         </motion.div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto"
-        >
-          {plans.map((plan) => (
-            <motion.div
-              key={plan.name}
-              variants={staggerItem}
-              whileHover={{ y: -6 }}
-              className="relative"
-            >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                  <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 px-3 py-1 shadow-md">
-                    <Star className="w-3 h-3 mr-1" /> Most Popular
-                  </Badge>
-                </div>
-              )}
-              <Card className={`h-full ${plan.color}`}>
-                <CardHeader className="text-center pb-2">
-                  <plan.icon className="w-8 h-8 mx-auto mb-2 text-amber-500" />
-                  <CardTitle className="text-xl">{plan.name}</CardTitle>
-                  <div className="mt-2">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    {plan.price !== "Free" && plan.price !== "Custom" && (
-                      <span className="text-zinc-500 text-sm">/mo</span>
-                    )}
-                  </div>
-                  <CardDescription className="mt-2">{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2.5">
-                    {plan.features.map((feat) => (
-                      <li key={feat} className="flex items-start gap-2 text-sm text-zinc-600 dark:text-zinc-300">
-                        <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                        {feat}
-                      </li>
-                    ))}
-                  </ul>
-                  <motion.div whileTap={{ scale: 0.97 }} className="pt-2">
-                    <Button className={`w-full ${plan.btnClass}`} variant={plan.popular ? "default" : "outline"}>
-                      {plan.price === "Custom" ? "Contact Sales" : "Get Started"}
-                    </Button>
-                  </motion.div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ──────────────────────────── CTA ──────────────────────────── */
-
-function CTASection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  return (
-    <section ref={ref} className="py-20 sm:py-28">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-8 sm:p-12 text-center shadow-2xl"
-        >
-          <FloatingParticles />
-          <div className="relative z-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Ready to Build with Agent Skills?
-            </h2>
-            <p className="text-lg text-white/80 max-w-xl mx-auto mb-8">
-              Start with one command. Compose capabilities. Ship production-ready
-              apps with animations that delight and components that perform.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                <Button
-                  size="lg"
-                  className="bg-white text-amber-700 hover:bg-white/90 shadow-xl px-8 text-base font-semibold"
-                >
-                  <Rocket className="w-5 h-5 mr-2" />
-                  Start Building Free
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 px-8 text-base"
-                >
-                  <Layers className="w-5 h-5 mr-2" />
-                  View on GitHub
-                </Button>
-              </motion.div>
-            </div>
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-[#6b634d]">{doneCount}/{items.length} completed</span>
+            <span className="text-sm font-bold text-[#92751f]">{Math.round(progress)}%</span>
           </div>
+          <Progress value={progress} className="h-3" />
+        </motion.div>
+
+        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-2">
+          {items.map((item, i) => (
+            <motion.div key={i} variants={staggerItem}>
+              <Card className={`${palette.card} border ${item.done ? "border-[#3f7450]/40 bg-[#3f7450]/5" : palette.border}`}>
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-start gap-3">
+                    <button
+                      onClick={() => toggleItem(i)}
+                      className={`flex-shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${item.done ? "bg-[#3f7450] border-[#3f7450]" : "border-[#d6d1c2] hover:border-[#92751f]"}`}
+                    >
+                      {item.done && <Check className="h-3.5 w-3.5 text-white" />}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-medium ${item.done ? "text-[#3f7450] line-through" : "text-[#151513]"}`}>
+                        {item.check}
+                      </p>
+                      <code className="text-xs bg-[#1a1a2e] text-[#e0e0e0] px-1.5 py-0.5 rounded mt-1 inline-block max-w-full overflow-x-auto">{item.command}</code>
+                      <p className="text-xs text-[#86837c] mt-1">{item.expected}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
   );
 }
 
-/* ──────────────────────────── FOOTER ──────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Footer
+   ════════════════════════════════════════════════════════════════════════════ */
 
 function Footer() {
   return (
-    <footer className="bg-zinc-900 dark:bg-zinc-950 border-t border-zinc-800">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-lg text-white">SkillForge</span>
-            </div>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              Building with agent skills, Framer Motion, and 21st.dev components.
-              Powered by the SMP v5.1 protocol.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-3">Product</h3>
-            <ul className="space-y-2 text-sm text-zinc-400">
-              <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-              <li><a href="#components" className="hover:text-white transition-colors">Components</a></li>
-              <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-3">Resources</h3>
-            <ul className="space-y-2 text-sm text-zinc-400">
-              <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Skills Registry</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">API Reference</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-3">Connect</h3>
-            <div className="flex items-center gap-3">
-              <a href="#" className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors" aria-label="GitHub">
-                <Code2 className="w-5 h-5 text-zinc-400" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors" aria-label="Social">
-                <Sparkles className="w-5 h-5 text-zinc-400" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors" aria-label="Email">
-                <Mail className="w-5 h-5 text-zinc-400" />
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="pt-8 border-t border-zinc-800 text-center">
-          <p className="text-sm text-zinc-500">
-            Built with SMP v5.1 Protocol | framer-motion-animator | ui-ux-pro-max | 21st-dev-components | 21st-dev-builder-v2
-          </p>
+    <footer className="bg-[#6b634d] text-white/80 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        <p className="text-sm">Generated by Z.ai | July 2026 | SMP v5.1 Protocol</p>
+        <p className="text-xs mt-2 text-white/50">Comprehensive Proxy Analysis & Installation Guide — Interactive Web Edition</p>
+        <div className="flex items-center justify-center gap-4 mt-4">
+          <Badge variant="outline" className="text-xs border-white/30 text-white/60">Next.js 16</Badge>
+          <Badge variant="outline" className="text-xs border-white/30 text-white/60">Framer Motion</Badge>
+          <Badge variant="outline" className="text-xs border-white/30 text-white/60">shadcn/ui</Badge>
+          <Badge variant="outline" className="text-xs border-white/30 text-white/60">Tailwind CSS 4</Badge>
         </div>
       </div>
     </footer>
   );
 }
 
-/* ──────────────────────────── MAIN PAGE ──────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════════════
+   MAIN PAGE
+   ════════════════════════════════════════════════════════════════════════════ */
 
-export default function Home() {
+export default function ProxyAnalysisPage() {
+  const [mobileNav, setMobileNav] = useState(false);
+
+  const navItems = [
+    { id: "ranked", label: "Rankings" },
+    { id: "install", label: "Install" },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-zinc-950">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-[#f6f6f6]">
+      {/* Mobile Nav Bar */}
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#d6d1c2]/50 px-4 py-3 flex items-center justify-between lg:hidden">
+        <div className="flex items-center gap-2">
+          <Shield className="h-5 w-5 text-[#92751f]" />
+          <span className="font-semibold text-[#6b634d] text-sm">Proxy Analysis</span>
+        </div>
+        <button onClick={() => setMobileNav(!mobileNav)} className="p-1">
+          {mobileNav ? <X className="h-5 w-5 text-[#6b634d]" /> : <Menu className="h-5 w-5 text-[#6b634d]" />}
+        </button>
+      </nav>
+
+      {/* Mobile Nav Dropdown */}
+      <AnimatePresence>
+        {mobileNav && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="lg:hidden bg-white border-b border-[#d6d1c2]/50 overflow-hidden"
+          >
+            <div className="p-4 space-y-2">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+                    setMobileNav(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 rounded-lg text-sm text-[#6b634d] hover:bg-[#f6f6f6]"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content */}
       <main className="flex-1">
-        <Hero />
-        <Stats />
-        <Features />
-        <ComponentBrowser />
-        <SkillsShowcase />
-        <Pricing />
-        <CTASection />
+        <HeroSection />
+        <MethodologySection />
+        <RankedSection />
+        <DeepDivesSection />
+        <ComparisonSection />
+        <SynergySection />
+        <InstallSection />
+        <DecisionTreeSection />
+        <ChecklistSection />
       </main>
+
       <Footer />
     </div>
   );
