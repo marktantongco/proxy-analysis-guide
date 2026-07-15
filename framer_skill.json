@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://explainx.ai/skills/patricio0312rev/skills/framer-motion-animator",
+    "name": "framer-motion-animator — AI agent skill - explainx.ai",
+    "snippet": "Fetches framer-motion-animator from patricio0312rev/skills and configures it for Cursor. 3. Select Cursor when prompted. The CLI shows a list of agents. Use ...",
+    "host_name": "explainx.ai",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://lobehub.com/skills/patricio0312rev-skills-framer-motion-animator",
+    "name": "framer-motion-animator | Skills Mark - LobeHub",
+    "snippet": "Free · Desktop Enhancement Framer Motion Animator is a developer-focused Skill for building smooth, production-ready animations and micro-interactions in React using Framer Motion's ...",
+    "host_name": "lobehub.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/patricio0312rev/skillset/blob/main/templates/frontend/framer-motion-animator/SKILL.md",
+    "name": "Framer Motion Animator - frontend - GitHub",
+    "snippet": "Creates smooth animations and micro-interactions using Framer Motion including page transitions, gestures, scroll-based animations, and orchestrated sequences.",
+    "host_name": "github.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://awesomeskill.ai/skill/patricio0312rev-skills-framer-motion-animator",
+    "name": "framer-motion-animator - Claude Skill - Awesome Skills",
+    "snippet": "Creates smooth animations and micro-interactions using Framer Motion including page transitions, gestures, scroll-based animations, and orchestrated sequences.\nThe `framer-motion-animator` skill provides developers with a streamlined way to create smooth, interactive animations and micro-interactions within React applications using Framer Motion. It addresses the challenge of implementing complex, visually appealing animations without manually handling low-level DOM manipulations or timing logic.",
+    "host_name": "awesomeskill.ai",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.claudemarketplace.net/skills/framer-motion-animator",
+    "name": "framer-motion-animator — Claude Code Skill | Claude Code",
+    "snippet": "Comprehensive library of +100 production-ready development skills covering every aspect of modern software engineering. From project setup to production…",
+    "host_name": "www.claudemarketplace.net",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

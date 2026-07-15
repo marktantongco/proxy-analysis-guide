@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://21st.dev/blog/introducing-agents-cli",
+    "name": "Use 21st in Your Agent: One CLI, Every Editor, One Endpoint",
+    "snippet": "It is a set of tools your coding agent can use directly: search the catalog, install components, generate UI, and publish your own work, all ...",
+    "host_name": "21st.dev",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://21st.dev/blog/component-libraries",
+    "name": "Introducing Component Libraries: Publish from Your Terminal, Used",
+    "snippet": "The core of it is one shell command: $. npx @21st-dev/cli add @your-scope/<component-name>?api_key=$API_KEY_21ST. Wrapped in a few lines of ...",
+    "host_name": "21st.dev",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://21st.dev/@samhimself/components/install-package",
+    "name": "Install Package | Community Components - 21st.dev",
+    "snippet": "Shows the full Install Instructions component with. Install Reveal the install command Copy prompt Copy code Remix Save Usage.tsx Component.tsx",
+    "host_name": "21st.dev",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://21st.dev/@preetsuthar17/components/ai-thinking-block",
+    "name": "AI Thinking Block | Community Components - 21st.dev",
+    "snippet": "HextaUI includes a CLI tool that simplifies the installation of components. Developers can use commands like npx hexta-ui add button to quickly ...",
+    "host_name": "21st.dev",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/webdev/comments/1sofb24/how_can_i_optimize_implementing_21stdev",
+    "name": "How can I optimize implementing 21st.dev components on  - Reddit",
+    "snippet": "- In terminal, paste the npx installation command - Then copied the prompt and pasted on CC - It worked - Then I asked to convert it to pure ...",
+    "host_name": "www.reddit.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]
