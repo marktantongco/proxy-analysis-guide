@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://www.truefoundry.com/blog/claude-code-proxy",
+    "name": "Claude Code Proxy: Route Claude, GPT-5 & Gemini Through",
+    "snippet": "A proxy lets you route haiku-tier tasks to GPT-4o-mini or Gemini Flash, and opus-tier tasks to the best available model without any client-side ...",
+    "host_name": "www.truefoundry.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/seifghazi/claude-code-proxy",
+    "name": "seifghazi/claude-code-proxy - GitHub",
+    "snippet": "A transparent proxy for capturing and visualizing in-flight Claude Code requests and conversations, with optional agent routing to different LLM providers.",
+    "host_name": "github.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/ClaudeCode/comments/1szv5qs/has_anyone_figured_out_automatic_model_routing",
+    "name": "Has anyone figured out automatic model routing inside Claude code",
+    "snippet": "Check out Claude-router it's a transparent proxy that automatically routes your requests to the cheapest capable models based on complexity. I routed all my Claude Code traffic through a local proxy for 3 ... - Reddit I measured what smart Claude routing actually saves - 73% cost reduction ... More results from www.reddit.com Missing: Node. js",
+    "host_name": "www.reddit.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/stevengonsalvez/claude-code-router-use-any-model-with-claude-codes-interface-c6a",
+    "name": "Claude Code Router: Use Any Model With Claude Code's Interface",
+    "snippet": "Claude Code Router is a middleware proxy that routes Claude Code API requests to DeepSeek, Gemini, Ollama, or OpenRouter. routing complexity ...",
+    "host_name": "dev.to",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://relayplane.com/blog/route-claude-anthropic-base-url-proxy",
+    "name": "How to Route Claude API Requests Through a Local Proxy (With",
+    "snippet": "It intercepts requests, routes them to the right model based on complexity, tracks costs per request, and gives you a dashboard to see where ... Missing: Node. js",
+    "host_name": "relayplane.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

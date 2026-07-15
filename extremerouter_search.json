@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://github.com/topics/token-saver",
+    "name": "token-saver · GitHub Topics",
+    "snippet": "Smart AI proxy router that connects Claude Code, Cursor, Codex, Copilot, and 50+ coding tools to 40+ AI providers with 100+ models. Saves 20-40% tokens via RTK ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://paul-hackenberger.medium.com/the-ultimate-token-saving-stack-rtk-caveman-and-tokensave-163badadd9ec",
+    "name": "The Ultimate Token-Saving Stack: RTK, Caveman, and TokenSave",
+    "snippet": "Here is how to configure the ultimate token-saving stack. CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. ... Missing: Next. js",
+    "host_name": "paul-hackenberger.medium.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/rtk-ai/rtk",
+    "name": "rtk-ai/rtk: CLI proxy that reduces LLM token consumption by 60  - GitHub",
+    "snippet": "CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. rtk filters and compresses command outputs before they reach your LLM context. ... Missing: ExtremeRouter 20-40%",
+    "host_name": "github.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/LocalLLaMA/comments/1u9anzk/cutting_llm_token_costs_with_rtk_headroom_and",
+    "name": "Cutting LLM Token Costs with rtk, headroom, and caveman - Reddit",
+    "snippet": "Cutting LLM Token Costs with rtk, headroom, and caveman - savings measured on real workloads · headroom: 2.8% of spend ($25.61) · rtk: 0.5% ($4.94). CLI proxy that reduces LLM token consumption by 60-90%. - Reddit Which token optimizer do you use? (rtk causing too many problems) More results from www.reddit.com Missing: ExtremeRouter js 20-40%",
+    "host_name": "www.reddit.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://prokopov.me/posts/save-tokens-with-rtk-proxy",
+    "name": "How to Save 60-90% of LLM Tokens with rtk Proxy - Maksym Prokopov",
+    "snippet": "rtk (Rust Token Killer) is a CLI proxy that sits between your LLM agent and shell commands. It filters and compresses output before it hits the ... Missing: ExtremeRouter js 20-40%",
+    "host_name": "prokopov.me",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

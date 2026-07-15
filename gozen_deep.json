@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://github.com/dopejs/GoZen/blob/main/README.md",
+    "name": "GoZen/README.md at main · dopejs/GoZen · GitHub",
+    "snippet": "Multi-CLI environment switcher for Claude Code, Codex, and OpenCode with API proxy auto-failover. Features. Multi-CLI Support — Supports Claude Code, Codex, and ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/dopejs/GoZen/blob/main/CLAUDE.md",
+    "name": "GoZen/CLAUDE.md at main · dopejs/GoZen · GitHub",
+    "snippet": "Go CLI tool for managing multiple Claude API provider configurations with proxy failover and TUI/Web interfaces. Tech Stack. Language: Go; TUI: Bubble Tea ( ...",
+    "host_name": "github.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/routatic/proxy",
+    "name": "routatic/proxy: route Claude Code requests through  - GitHub",
+    "snippet": "routatic-proxy ... A Go CLI proxy that lets you route Claude Code requests through multiple upstream providers — OpenCode Go, OpenCode Zen, and ... Missing: budget | Show results with: budget\nroutatic-proxy ... A Go CLI proxy that lets you route Claude Code requests through multiple upstream providers — OpenCode Go, OpenCode Zen, and ... Missing: dopejs GoZen",
+    "host_name": "github.com",
+    "rank": 2,
+    "date": "Jul 13, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://gozen.dev",
+    "name": "GoZen: Multi-CLI Environment Switcher",
+    "snippet": "Open Source CLI Tool. GoZenMulti-CLI Environment Switcher. Unified management for Claude Code, Codex, and OpenCode configurations with API proxy auto-failover. Missing: budget controls\nOpen Source CLI Tool. GoZenMulti-CLI Environment Switcher. Unified management for Claude Code, Codex, and OpenCode configurations with API proxy auto-failover. Missing: budget | Show results with: budget",
+    "host_name": "gozen.dev",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/router-for-me/CLIProxyAPI",
+    "name": "CLI Proxy API - GitHub",
+    "snippet": "A proxy server that provides OpenAI/Gemini/Claude/Codex/Grok compatible API interfaces for CLI. It now also supports OpenAI Codex (GPT models) and Claude Code ... Missing: dopejs GoZen budget",
+    "host_name": "github.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/topics/claude-code-router?o=desc&s=forks",
+    "name": "claude-code-router · GitHub Topics",
+    "snippet": "Intelligent API gateway for Claude Code and Codex CLI - rotate endpoints, monitor usage, and seamlessly integrate OpenAI, Gemini, and other platforms. ai-coding ... Missing: scenario controls\nIntelligent API gateway for Claude Code and Codex CLI - rotate endpoints, monitor usage, and seamlessly integrate OpenAI, Gemini, and other platforms. ai-coding ... Missing: budget | Show results with: budget",
+    "host_name": "github.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://skywork.ai/skypage/en/claude-code-cli-proxy/2044690246202511360",
+    "name": "Comprehensive Guide to Claude Code CLI Proxy - Skywork",
+    "snippet": "The Claude Code CLI proxy represents a critical bridge between local development environments and Anthropic's powerful cloud-based AI models. At ...",
+    "host_name": "skywork.ai",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/topics/multi-cli",
+    "name": "multi-cli · GitHub Topics",
+    "snippet": "Repo-aware router skill for AI coding CLIs that maps tasks to the right repository, project skill/agent, and native CLI backend. cli automation opencode ... Missing: dopejs proxy scenario controls\nCatálogo vivo de features reusables para plugins multi-CLI (Claude Code, OpenCode, Gemini CLI). Versionado automático, git hooks, compatibilidad entre CLIs y ...\nRepo-aware router skill for AI coding CLIs that maps tasks to the right repository, project skill/agent, and native CLI backend. cli automation opencode ... Missing: dopejs proxy budget",
+    "host_name": "github.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/musistudio/claude-code-router?ref=selectd.tech",
+    "name": "musistudio/claude-code-router at selectd.tech - GitHub",
+    "snippet": "Claude Code Router Desktop is a local gateway and desktop control panel for routing agent requests from Claude Code, Codex, ZCode, and ... Missing: CLI scenario",
+    "host_name": "github.com",
+    "rank": 8,
+    "date": "Jul 11, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/topics/multi-cli?l=javascript",
+    "name": "multi-cli · GitHub Topics",
+    "snippet": "Provide feedback · Saved searches · multi-cli. Missing: dopejs GoZen proxy scenario routing budget controls\n... Claude can also auto-dispatch. gemini cursor acp copilot codex anthropic qwen ai-coding claude-code agent-client-protocol claude-code-plugin multi-cli.",
+    "host_name": "github.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

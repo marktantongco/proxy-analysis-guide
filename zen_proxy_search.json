@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://github.com/routatic/proxy",
+    "name": "routatic/proxy: route Claude Code requests through multiple  - GitHub",
+    "snippet": "A Go CLI proxy that lets you route Claude Code requests through multiple upstream providers — OpenCode Go, OpenCode Zen, and AWS Bedrock — with ... Missing: Node. layer",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "Jul 13, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/ClaudeCode/comments/1ty0hct/i_built_a_cli_wizard_proxy_to_run_opencode_zengo",
+    "name": "I built a CLI wizard / proxy to run OpenCode Zen/Go (including free",
+    "snippet": "So I put together opencode-starter, a small npm CLI that walks you through setup and launches Claude Code pointed at OpenCode Zen or Go. What it ... I built an open-source proxy that compresses Claude Code's full ... LLM proxy that lets Claude Code talk to any model : r/ClaudeCode - Reddit More results from www.reddit.com Missing: js | Show results with: js",
+    "host_name": "www.reddit.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/omachokoyakubu/hacking-the-brain-how-i-built-a-custom-proxy-to-run-claude-code-on-gemini-20-flash-for-free-3bkh",
+    "name": "Hacking the Brain: How I Built a Custom Proxy to Run Claude Code",
+    "snippet": "To solve this, I moved away from pre-built tools and engineered a custom Node.js Universal Translator Proxy. Protocol Translation (Anthropic ↔ ... Missing: zen- layer",
+    "host_name": "dev.to",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://proxys.io/en/blog/proxy-settings/claude-code-proxy",
+    "name": "Claude Code Proxies: How to Set Up and Use Agent",
+    "snippet": "Learn how Claude code works with proxy servers, why they are needed, and how to correctly configure a proxy for an AI coding agent.",
+    "host_name": "proxys.io",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.coronium.io/blog/claude-code-proxy-setup",
+    "name": "Claude Code Proxy Setup & MCP Integration 2026 - Coronium.io",
+    "snippet": "Claude Code runs on Node.js and honors the standard proxy environment variables. Once set, they apply to model calls, WebFetch, MCP child processes, and any ... Missing: zen- translation",
+    "host_name": "www.coronium.io",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]
