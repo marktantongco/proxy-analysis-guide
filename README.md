@@ -691,6 +691,15 @@ The analyzed proxy repositories have their own licenses:
 
 ## 🚢 Deployment
 
+### Live Deployments
+
+| Platform | URL | Features |
+|----------|-----|----------|
+| **Vercel** (full) | [my-project-tau-five-94.vercel.app](https://my-project-tau-five-94.vercel.app) | All features including API routes, monitoring, component search |
+| **GitHub Pages** (static) | [marktantongco.github.io/proxy-analysis-guide](https://marktantongco.github.io/proxy-analysis-guide) | Static export — UI works, API routes unavailable |
+
+> **Recommended:** Use the Vercel deployment for the full experience with API routes, real-time monitoring, and component search.
+
 ### Option 1: Vercel (Recommended)
 
 The easiest way to deploy this Next.js app is with [Vercel](https://vercel.com):
@@ -698,7 +707,7 @@ The easiest way to deploy this Next.js app is with [Vercel](https://vercel.com):
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Import your GitHub repository: `marktantongco/proxy-analysis-guide`
 3. Vercel auto-detects Next.js — just click **Deploy**
-4. Your app will be live at `https://your-project.vercel.app`
+4. Your app will be live at your Vercel URL
 
 > **Note:** The `vercel.json` is already configured in the repo. No additional setup needed.
 
