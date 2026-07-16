@@ -36,16 +36,48 @@ jobs:
 
       - name: Generate Prisma client
         run: bun run db:generate
+        env:
+          DATABASE_URL: "file:./dev.db"
 
-      - name: Build
+      # Configure Next.js for static export with GitHub Pages base path
+      - name: Configure static export
+        run: |
+          cat > next.config.ts << 'NEXTCONFIG'
+          import type { NextConfig } from "next";
+
+          const nextConfig: NextConfig = {
+            output: "export",
+            basePath: "/proxy-analysis-guide",
+            images: {
+              unoptimized: true,
+            },
+            typescript: {
+              ignoreBuildErrors: true,
+            },
+            reactStrictMode: false,
+          };
+
+          export default nextConfig;
+          NEXTCONFIG
+
+      # Remove API route files (not supported in static export)
+      - name: Remove API routes for static build
+        run: |
+          rm -rf src/app/api
+
+      - name: Build static site
         run: bun run build
         env:
           DATABASE_URL: "file:./dev.db"
 
+      - name: Add 404 page for SPA routing
+        run: |
+          cp out/index.html out/404.html 2>/dev/null || true
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .next/standalone
+          path: out
 
   deploy:
     environment:
