@@ -36,7 +36,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -48,7 +47,72 @@ dev.log
 dev.out.log
 test
 prompt
-
 server.log
+
 # Skills directory
 /skills/
+
+# Tool results and temp files
+/tool-results/
+
+# Research / scratch JSON files
+*_search.json
+*_deep.json
+*_raw.json
+*_skill.json
+*_skill_md.json
+*_skill_final.json
+*_readme_raw.json
+*_api_docs.json
+*_cli.json
+*_profile.json
+*_trending.json
+/skills_trending.json
+/routatic_search.json
+/uiux_skill.json
+/21st_api_docs.json
+/owl_deep.json
+/find_skills_skill.json
+/find_skills_raw.json
+/find_skills_search.json
+/opclaude_search.json
+/gozen_search.json
+/gozen_readme.json
+/gozen_readme_raw.json
+/21stbuilder_skill.json
+/21stdev_skill.json
+/21stdev_api.json
+/21st_agents_cli.json
+/21st_cli.json
+/framer_skill.json
+/framer_skill_md.json
+/framer_skill_final.json
+/framer_search2.json
+/owl_search.json
+/owl_readme_raw.json
+/routatic_readme_raw.json
+/extremerouter_search.json
+/zen_proxy_search.json
+/smp_profile.json
+/smp_v51.json
+/research_agents_search.json
+/skills_cli_search.json
+
+# Screenshots (not needed in repo)
+/screenshot_*.png
+
+# Upload directory
+/upload/
+
+# Download directory (generated outputs)
+/download/
+
+# Database
+/db/
+
+# Prisma generated
+/prisma/*.db
+/prisma/*.db-journal
+
+# Worklog (local dev)
+/worklog.md
