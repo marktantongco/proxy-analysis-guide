@@ -66,7 +66,7 @@ jobs:
           rm -rf src/app/api
 
       - name: Build static site
-        run: bun run build
+        run: npx next build
         env:
           DATABASE_URL: "file:./dev.db"
 
