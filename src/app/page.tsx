@@ -20,7 +20,7 @@ import {
   decisionTree, ramImpact, unifiedStackConfig, startupSequence, scoringWeights,
   type ProxyRepo, type ProxyDeepDive, type ChecklistItem
 } from "@/lib/proxy-data";
-import { DarkModeToggle, ComponentSearchSection, ConfigExportSection, MonitoringSection } from "@/components/new-sections";
+import { DarkModeToggle, ComponentSearchSection, ConfigExportSection, MonitoringSection, ComponentInstallSection, InstallationRunner } from "@/components/new-sections";
 
 /* ──────────────── ANIMATION PRESETS (framer-motion-animator) ──────────────── */
 
@@ -902,6 +902,8 @@ export default function ProxyAnalysisPage() {
     { id: "ranked", label: "Rankings" },
     { id: "components", label: "Components" },
     { id: "install", label: "Install" },
+    { id: "install-runner", label: "Run Install" },
+    { id: "component-install", label: "Add-ons" },
     { id: "monitor", label: "Monitor" },
   ];
 
@@ -972,6 +974,8 @@ export default function ProxyAnalysisPage() {
         <SynergySection />
         <ComponentSearchSection />
         <InstallSection />
+        <ComponentInstallSection />
+        <InstallationRunner />
         <ConfigExportSection />
         <DecisionTreeSection />
         <ChecklistSection />

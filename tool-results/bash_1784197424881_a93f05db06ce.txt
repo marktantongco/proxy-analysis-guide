@@ -1,0 +1,604 @@
+Found 600 skills
+
+#    Name                                     Source                                          Installs  Official
+-------------------------------------------------------------------------------------------------------------------
+1    find-skills                              vercel-labs/skills                                 18470  YES
+2    ai-video-generation                      101-skills/skills                                  14310  
+3    ai-image-generation                      101-skills/skills                                  14247  
+4    ai-avatar-video                          101-skills/skills                                  14241  
+5    remotion-render                          101-skills/skills                                  14240  
+6    twitter-automation                       101-skills/skills                                  14240  
+7    grill-me                                 mattpocock/skills                                  10503  
+8    grill-with-docs                          mattpocock/skills                                   9095  
+9    grilling                                 mattpocock/skills                                   8579  
+10   improve-codebase-architecture            mattpocock/skills                                   8195  
+11   handoff                                  mattpocock/skills                                   7976  
+12   tdd                                      mattpocock/skills                                   7910  
+13   domain-modeling                          mattpocock/skills                                   7820  
+14   code-review                              mattpocock/skills                                   7745  
+15   lark-base                                open.feishu.cn                                      7595  
+16   lark-shared                              open.feishu.cn                                      7594  
+17   lark-doc                                 open.feishu.cn                                      7593  
+18   lark-drive                               open.feishu.cn                                      7593  
+19   lark-whiteboard                          open.feishu.cn                                      7591  
+20   lark-im                                  open.feishu.cn                                      7589  
+21   lark-sheets                              open.feishu.cn                                      7588  
+22   lark-approval                            open.feishu.cn                                      7588  
+23   lark-wiki                                open.feishu.cn                                      7587  
+24   lark-task                                open.feishu.cn                                      7586  
+25   lark-apps                                open.feishu.cn                                      7584  
+26   lark-contact                             open.feishu.cn                                      7584  
+27   lark-note                                open.feishu.cn                                      7583  
+28   lark-calendar                            open.feishu.cn                                      7582  
+29   lark-slides                              open.feishu.cn                                      7582  
+30   lark-openapi-explorer                    open.feishu.cn                                      7581  
+31   lark-minutes                             open.feishu.cn                                      7580  
+32   lark-markdown                            open.feishu.cn                                      7580  
+33   lark-mail                                open.feishu.cn                                      7580  
+34   lark-vc-agent                            open.feishu.cn                                      7579  
+35   lark-attendance                          open.feishu.cn                                      7578  
+36   lark-okr                                 open.feishu.cn                                      7578  
+37   lark-vc                                  open.feishu.cn                                      7578  
+38   lark-workflow-standup-report             open.feishu.cn                                      7578  
+39   lark-skill-maker                         open.feishu.cn                                      7577  
+40   lark-workflow-meeting-summary            open.feishu.cn                                      7576  
+41   lark-event                               open.feishu.cn                                      7573  
+42   setup-matt-pocock-skills                 mattpocock/skills                                   7553  
+43   codebase-design                          mattpocock/skills                                   7501  
+44   to-spec                                  mattpocock/skills                                   7487  
+45   implement                                mattpocock/skills                                   7445  
+46   teach                                    mattpocock/skills                                   7425  
+47   wayfinder                                mattpocock/skills                                   7339  
+48   to-tickets                               mattpocock/skills                                   7339  
+49   diagnosing-bugs                          mattpocock/skills                                   7336  
+50   prototype                                mattpocock/skills                                   7312  
+51   writing-great-skills                     mattpocock/skills                                   7255  
+52   research                                 mattpocock/skills                                   7208  
+53   hyperframes-cli                          heygen-com/hyperframes                              7191  
+54   gws-gmail-send                           googleworkspace/cli                                 7107  YES
+55   triage                                   mattpocock/skills                                   7081  
+56   hyperframes-animation                    heygen-com/hyperframes                              6854  
+57   ask-matt                                 mattpocock/skills                                   6852  
+58   media-use                                heygen-com/hyperframes                              6835  
+59   hyperframes-creative                     heygen-com/hyperframes                              6830  
+60   resolving-merge-conflicts                mattpocock/skills                                   6642  
+61   hyperframes                              heygen-com/hyperframes                              6500  
+62   hyperframes-core                         heygen-com/hyperframes                              6448  
+63   hyperframes-registry                     heygen-com/hyperframes                              6442  
+64   hyperframes-keyframes                    heygen-com/hyperframes                              6423  
+65   image-to-video                           skills-collective/skills                            5993  
+66   ai-video-generation                      skills-collective/skills                            5950  
+67   ai-image-generation                      skills-collective/skills                            5935  
+68   design-guide                             getpaperclipai/paperclip                            5901  
+69   paperclip-create-agent                   getpaperclipai/paperclip                            5893  
+70   paperclip-board                          getpaperclipai/paperclip                            5892  
+71   para-memory-files                        getpaperclipai/paperclip                            5892  
+72   paperclip-converting-plans-to-tasks      getpaperclipai/paperclip                            5891  
+73   paperclip                                getpaperclipai/paperclip                            5890  
+74   ai-music                                 skills-collective/skills                            5852  
+75   video-edit                               skills-collective/skills                            5785  
+76   lark-doc                                 larksuite/cli                                       5295  
+77   lark-base                                larksuite/cli                                       5285  
+78   lark-drive                               larksuite/cli                                       5281  
+79   lark-shared                              larksuite/cli                                       5280  
+80   lark-wiki                                larksuite/cli                                       5267  
+81   lark-sheets                              larksuite/cli                                       5258  
+82   lark-im                                  larksuite/cli                                       5256  
+83   lark-task                                larksuite/cli                                       5255  
+84   lark-whiteboard                          larksuite/cli                                       5253  
+85   lark-calendar                            larksuite/cli                                       5246  
+86   lark-markdown                            larksuite/cli                                       5238  
+87   lark-minutes                             larksuite/cli                                       5222  
+88   lark-slides                              larksuite/cli                                       5219  
+89   lark-vc-agent                            larksuite/cli                                       5214  
+90   lark-mail                                larksuite/cli                                       5214  
+91   lark-apps                                larksuite/cli                                       5213  
+92   lark-vc                                  larksuite/cli                                       5213  
+93   lark-event                               larksuite/cli                                       5210  
+94   lark-workflow-meeting-summary            larksuite/cli                                       5210  
+95   lark-contact                             larksuite/cli                                       5209  
+96   lark-approval                            larksuite/cli                                       5207  
+97   lark-openapi-explorer                    larksuite/cli                                       5206  
+98   lark-workflow-standup-report             larksuite/cli                                       5206  
+99   lark-skill-maker                         larksuite/cli                                       5205  
+100  lark-okr                                 larksuite/cli                                       5203  
+101  lark-attendance                          larksuite/cli                                       5198  
+102  lark-note                                larksuite/cli                                       5196  
+103  gws-shared                               googleworkspace/cli                                 4998  YES
+104  gws-gmail                                googleworkspace/cli                                 4602  YES
+105  gws-drive                                googleworkspace/cli                                 4545  YES
+106  frontend-design                          anthropics/skills                                   3994  YES
+107  design-an-interface                      mattpocock/skills                                   3817  
+108  ai-research-explore                      lllllllama/rigorpilot-skills                        3742  
+109  analyze-project                          lllllllama/rigorpilot-skills                        3728  
+110  ai-research-reproduction                 lllllllama/rigorpilot-skills                        3727  
+111  explore-code                             lllllllama/rigorpilot-skills                        3726  
+112  repo-intake-and-plan                     lllllllama/rigorpilot-skills                        3726  
+113  paper-context-resolver                   lllllllama/rigorpilot-skills                        3726  
+114  run-train                                lllllllama/rigorpilot-skills                        3726  
+115  explore-run                              lllllllama/rigorpilot-skills                        3726  
+116  safe-debug                               lllllllama/rigorpilot-skills                        3725  
+117  minimal-run-and-audit                    lllllllama/rigorpilot-skills                        3724  
+118  env-and-assets-bootstrap                 lllllllama/rigorpilot-skills                        3724  
+119  general-video                            heygen-com/hyperframes                              3717  
+120  qa                                       mattpocock/skills                                   3696  
+121  loop-me                                  mattpocock/skills                                   3662  
+122  request-refactor-plan                    mattpocock/skills                                   3654  
+123  claude-handoff                           mattpocock/skills                                   3616  
+124  obsidian-vault                           mattpocock/skills                                   3588  
+125  product-launch-video                     heygen-com/hyperframes                              3587  
+126  git-guardrails-claude-code               mattpocock/skills                                   3586  
+127  faceless-explainer                       heygen-com/hyperframes                              3567  
+128  ubiquitous-language                      mattpocock/skills                                   3562  
+129  edit-article                             mattpocock/skills                                   3555  
+130  setup-pre-commit                         mattpocock/skills                                   3468  
+131  scaffold-exercises                       mattpocock/skills                                   3452  
+132  writing-fragments                        mattpocock/skills                                   3437  
+133  writing-shape                            mattpocock/skills                                   3435  
+134  writing-beats                            mattpocock/skills                                   3433  
+135  caveman                                  juliusbrussee/caveman                               3424  
+136  wizard                                   mattpocock/skills                                   3423  
+137  migrate-to-shoehorn                      mattpocock/skills                                   3409  
+138  motion-graphics                          heygen-com/hyperframes                              3403  
+139  to-questionnaire                         mattpocock/skills                                   3361  
+140  setup-ts-deep-modules                    mattpocock/skills                                   3281  
+141  agent-browser                            vercel-labs/agent-browser                           3248  YES
+142  design-taste-frontend                    leonxlnx/taste-skill                                3190  
+143  pr-to-video                              heygen-com/hyperframes                              3126  
+144  microsoft-foundry                        microsoft/azure-skills                              2946  YES
+145  talking-head-recut                       heygen-com/hyperframes                              2912  
+146  azure-deploy                             microsoft/azure-skills                              2911  YES
+147  remotion-to-hyperframes                  heygen-com/hyperframes                              2909  
+148  azure-diagnostics                        microsoft/azure-skills                              2905  YES
+149  azure-ai                                 microsoft/azure-skills                              2904  YES
+150  appinsights-instrumentation              microsoft/azure-skills                              2901  YES
+151  azure-validate                           microsoft/azure-skills                              2900  YES
+152  azure-storage                            microsoft/azure-skills                              2899  YES
+153  entra-app-registration                   microsoft/azure-skills                              2899  YES
+154  azure-prepare                            microsoft/azure-skills                              2899  YES
+155  azure-aigateway                          microsoft/azure-skills                              2898  YES
+156  azure-resource-lookup                    microsoft/azure-skills                              2898  YES
+157  azure-messaging                          microsoft/azure-skills                              2897  YES
+158  azure-rbac                               microsoft/azure-skills                              2896  YES
+159  azure-compliance                         microsoft/azure-skills                              2896  YES
+160  azure-kusto                              microsoft/azure-skills                              2896  YES
+161  azure-resource-visualizer                microsoft/azure-skills                              2895  YES
+162  embedded-captions                        heygen-com/hyperframes                              2895  
+163  azure-compute                            microsoft/azure-skills                              2885  YES
+164  azure-cloud-migrate                      microsoft/azure-skills                              2884  YES
+165  music-to-video                           heygen-com/hyperframes                              2883  
+166  azure-quotas                             microsoft/azure-skills                              2874  YES
+167  azure-upgrade                            microsoft/azure-skills                              2872  YES
+168  azure-enterprise-infra-planner           microsoft/azure-skills                              2871  YES
+169  azure-kubernetes                         microsoft/azure-skills                              2871  YES
+170  azure-cost                               microsoft/azure-skills                              2871  YES
+171  airunway-aks-setup                       microsoft/azure-skills                              2865  YES
+172  entra-agent-id                           microsoft/azure-skills                              2862  YES
+173  azure-reliability                        microsoft/azure-skills                              2852  YES
+174  emil-design-eng                          emilkowalski/skills                                 2849  
+175  slideshow                                heygen-com/hyperframes                              2841  
+176  python-appservice-deploy                 microsoft/azure-skills                              2802  YES
+177  agent-browser                            101-skills/skills                                   2766  
+178  caveman-commit                           juliusbrussee/caveman                               2741  
+179  caveman-review                           juliusbrussee/caveman                               2730  
+180  vercel-react-best-practices              vercel-labs/agent-skills                            2711  YES
+181  cavecrew                                 juliusbrussee/caveman                               2706  
+182  caveman-help                             juliusbrussee/caveman                               2706  
+183  caveman-compress                         juliusbrussee/caveman                               2704  
+184  caveman-stats                            juliusbrussee/caveman                               2693  
+185  review-animations                        emilkowalski/skills                                 2584  
+186  improve-animations                       emilkowalski/skills                                 2584  
+187  apple-design                             emilkowalski/skills                                 2579  
+188  animation-vocabulary                     emilkowalski/skills                                 2514  
+189  web-design-guidelines                    vercel-labs/agent-skills                            2490  YES
+190  gws-gmail-read                           googleworkspace/cli                                 2282  YES
+191  find-animation-opportunities             emilkowalski/skills                                 2268  
+192  high-end-visual-design                   leonxlnx/taste-skill                                2236  
+193  redesign-existing-projects               leonxlnx/taste-skill                                2181  
+194  browser-act                              browser-act/skills                                  2177  
+195  amazon-product-research                  nexscope-ai/amazon-skills                           2151  
+196  gws-calendar                             googleworkspace/cli                                 2091  YES
+197  minimalist-ui                            leonxlnx/taste-skill                                1988  
+198  brandkit                                 leonxlnx/taste-skill                                1948  
+199  gpt-taste                                leonxlnx/taste-skill                                1944  
+200  imagegen-frontend-web                    leonxlnx/taste-skill                                1932  
+201  figma                                    heygen-com/hyperframes                              1925  
+202  simple                                   roin-orca/skills                                    1913  
+203  imagegen-frontend-mobile                 leonxlnx/taste-skill                                1895  
+204  reddit-automation                        doany-skills/skills                                 1887  
+205  supabase-postgres-best-practices         supabase/agent-skills                               1881  YES
+206  full-output-enforcement                  leonxlnx/taste-skill                                1875  
+207  image-to-code                            leonxlnx/taste-skill                                1861  
+208  orchestration                            stablyai/orca                                       1853  
+209  remotion-best-practices                  remotion-dev/skills                                 1831  YES
+210  industrial-brutalist-ui                  leonxlnx/taste-skill                                1821  
+211  brainstorming                            obra/superpowers                                    1819  
+212  web-search                               101-skills/skills                                   1813  
+213  stitch-design-taste                      leonxlnx/taste-skill                                1811  
+214  ui-ux-pro-max                            nextlevelbuilder/ui-ux-pro-max-skill                1801  
+215  python-executor                          101-skills/skills                                   1799  
+216  agent-tools                              101-skills/skills                                   1798  
+217  infsh-cli                                101-skills/skills                                   1798  
+218  browser-act-skill-forge                  browser-act/skills                                  1785  
+219  design-taste-frontend-v1                 leonxlnx/taste-skill                                1738  
+220  cross-border-ecommerce                   nexscope-ai/ecommerce-skills                        1735  
+221  orca-cli                                 stablyai/orca                                       1728  
+222  hallmark                                 nutlope/hallmark                                    1650  
+223  wind-mcp-skill                           wind-information-co-ltd/wind-skills                 1584  
+224  gws-sheets                               googleworkspace/cli                                 1558  YES
+225  supabase                                 supabase/agent-skills                               1545  YES
+226  shadcn                                   shadcn/ui                                           1518  
+227  anti-ui-slop                             uizze.com                                           1487  
+228  systematic-debugging                     obra/superpowers                                    1476  
+229  computer-use                             stablyai/orca                                       1467  
+230  skill-creator                            anthropics/skills                                   1451  YES
+231  remotion-create                          remotion-dev/skills                                 1406  YES
+232  remotion-render                          remotion-dev/skills                                 1393  YES
+233  azure-hosted-copilot-sdk                 microsoft/azure-skills                              1393  YES
+234  writing-plans                            obra/superpowers                                    1368  
+235  gws-calendar-insert                      googleworkspace/cli                                 1367  YES
+236  mediabunny                               remotion-dev/skills                                 1360  YES
+237  remotion-captions                        remotion-dev/skills                                 1349  YES
+238  gws-gmail-reply                          googleworkspace/cli                                 1348  YES
+239  gws-sheets-read                          googleworkspace/cli                                 1338  YES
+240  gws-gmail-triage                         googleworkspace/cli                                 1336  YES
+241  vercel-composition-patterns              vercel-labs/agent-skills                            1331  YES
+242  requesting-code-review                   obra/superpowers                                    1319  
+243  remotion-markup                          remotion-dev/skills                                 1307  YES
+244  test-driven-development                  obra/superpowers                                    1300  
+245  remotion-interactivity                   remotion-dev/skills                                 1291  YES
+246  using-superpowers                        obra/superpowers                                    1283  
+247  gws-calendar-agenda                      googleworkspace/cli                                 1272  YES
+248  recipe-email-drive-link                  googleworkspace/cli                                 1269  YES
+249  remotion-saas                            remotion-dev/skills                                 1262  YES
+250  verification-before-completion           obra/superpowers                                    1251  
+251  email-smtp-send                          tiangong-ai/skills                                  1236  
+252  gws-tasks                                googleworkspace/cli                                 1223  YES
+253  executing-plans                          obra/superpowers                                    1223  
+254  gws-drive-upload                         googleworkspace/cli                                 1219  YES
+255  gws-docs                                 googleworkspace/cli                                 1210  YES
+256  recipe-draft-email-from-doc              googleworkspace/cli                                 1199  YES
+257  gws-gmail-watch                          googleworkspace/cli                                 1178  YES
+258  gws-gmail-forward                        googleworkspace/cli                                 1161  YES
+259  subagent-driven-development              obra/superpowers                                    1154  
+260  gws-docs-write                           googleworkspace/cli                                 1153  YES
+261  recipe-organize-drive-folder             googleworkspace/cli                                 1141  YES
+262  gws-sheets-append                        googleworkspace/cli                                 1132  YES
+263  playwright-cli                           microsoft/playwright-cli                            1131  YES
+264  dispatching-parallel-agents              obra/superpowers                                    1130  
+265  finishing-a-development-branch           obra/superpowers                                    1127  
+266  gws-slides                               googleworkspace/cli                                 1126  YES
+267  gws-forms                                googleworkspace/cli                                 1124  YES
+268  receiving-code-review                    obra/superpowers                                    1121  
+269  gws-meet                                 googleworkspace/cli                                 1116  YES
+270  using-git-worktrees                      obra/superpowers                                    1113  
+271  writing-skills                           obra/superpowers                                    1104  
+272  gws-workflow-email-to-task               googleworkspace/cli                                 1102  YES
+273  gws-keep                                 googleworkspace/cli                                 1102  YES
+274  gws-chat                                 googleworkspace/cli                                 1098  YES
+275  recipe-save-email-attachments            googleworkspace/cli                                 1098  YES
+276  gws-people                               googleworkspace/cli                                 1097  YES
+277  gws-workflow                             googleworkspace/cli                                 1094  YES
+278  gws-gmail-reply-all                      googleworkspace/cli                                 1094  YES
+279  gws-chat-send                            googleworkspace/cli                                 1093  YES
+280  recipe-create-gmail-filter               googleworkspace/cli                                 1092  YES
+281  gws-script                               googleworkspace/cli                                 1092  YES
+282  gws-script-push                          googleworkspace/cli                                 1092  YES
+283  recipe-create-presentation               googleworkspace/cli                                 1088  YES
+284  recipe-plan-weekly-schedule              googleworkspace/cli                                 1084  YES
+285  recipe-backup-sheet-as-csv               googleworkspace/cli                                 1083  YES
+286  gws-events                               googleworkspace/cli                                 1083  YES
+287  gws-workflow-standup-report              googleworkspace/cli                                 1083  YES
+288  gws-workflow-weekly-digest               googleworkspace/cli                                 1083  YES
+289  recipe-compare-sheet-tabs                googleworkspace/cli                                 1083  YES
+290  gws-workflow-meeting-prep                googleworkspace/cli                                 1083  YES
+291  recipe-block-focus-time                  googleworkspace/cli                                 1083  YES
+292  recipe-review-overdue-tasks              googleworkspace/cli                                 1082  YES
+293  recipe-find-free-time                    googleworkspace/cli                                 1082  YES
+294  gws-events-subscribe                     googleworkspace/cli                                 1081  YES
+295  recipe-share-folder-with-team            googleworkspace/cli                                 1081  YES
+296  recipe-bulk-download-folder              googleworkspace/cli                                 1081  YES
+297  persona-it-admin                         googleworkspace/cli                                 1081  YES
+298  recipe-review-meet-participants          googleworkspace/cli                                 1080  YES
+299  persona-project-manager                  googleworkspace/cli                                 1080  YES
+300  recipe-collect-form-responses            googleworkspace/cli                                 1080  YES
+301  recipe-reschedule-meeting                googleworkspace/cli                                 1080  YES
+302  recipe-find-large-files                  googleworkspace/cli                                 1080  YES
+303  recipe-create-feedback-form              googleworkspace/cli                                 1080  YES
+304  recipe-create-doc-from-template          googleworkspace/cli                                 1080  YES
+305  recipe-label-and-archive-emails          googleworkspace/cli                                 1080  YES
+306  recipe-create-shared-drive               googleworkspace/cli                                 1080  YES
+307  recipe-create-vacation-responder         googleworkspace/cli                                 1080  YES
+308  gws-events-renew                         googleworkspace/cli                                 1080  YES
+309  recipe-share-doc-and-notify              googleworkspace/cli                                 1079  YES
+310  recipe-watch-drive-changes               googleworkspace/cli                                 1079  YES
+311  persona-content-creator                  googleworkspace/cli                                 1079  YES
+312  recipe-create-classroom-course           googleworkspace/cli                                 1079  YES
+313  recipe-copy-sheet-for-new-month          googleworkspace/cli                                 1079  YES
+314  recipe-generate-report-from-sheet        googleworkspace/cli                                 1079  YES
+315  recipe-create-events-from-sheet          googleworkspace/cli                                 1079  YES
+316  recipe-save-email-to-doc                 googleworkspace/cli                                 1079  YES
+317  persona-sales-ops                        googleworkspace/cli                                 1079  YES
+318  recipe-create-expense-tracker            googleworkspace/cli                                 1079  YES
+319  gws-admin-reports                        googleworkspace/cli                                 1079  YES
+320  persona-exec-assistant                   googleworkspace/cli                                 1079  YES
+321  recipe-schedule-recurring-event          googleworkspace/cli                                 1079  YES
+322  persona-hr-coordinator                   googleworkspace/cli                                 1079  YES
+323  recipe-batch-invite-to-event             googleworkspace/cli                                 1079  YES
+324  gws-workflow-file-announce               googleworkspace/cli                                 1079  YES
+325  persona-event-coordinator                googleworkspace/cli                                 1078  YES
+326  gws-modelarmor-sanitize-prompt           googleworkspace/cli                                 1078  YES
+327  persona-researcher                       googleworkspace/cli                                 1078  YES
+328  recipe-create-meet-space                 googleworkspace/cli                                 1078  YES
+329  recipe-create-task-list                  googleworkspace/cli                                 1078  YES
+330  persona-customer-support                 googleworkspace/cli                                 1078  YES
+331  recipe-forward-labeled-emails            googleworkspace/cli                                 1078  YES
+332  recipe-sync-contacts-to-sheet            googleworkspace/cli                                 1078  YES
+333  recipe-share-event-materials             googleworkspace/cli                                 1078  YES
+334  gws-modelarmor                           googleworkspace/cli                                 1078  YES
+335  gws-modelarmor-create-template           googleworkspace/cli                                 1078  YES
+336  recipe-post-mortem-setup                 googleworkspace/cli                                 1078  YES
+337  recipe-send-team-announcement            googleworkspace/cli                                 1078  YES
+338  recipe-log-deal-update                   googleworkspace/cli                                 1078  YES
+339  gws-modelarmor-sanitize-response         googleworkspace/cli                                 1077  YES
+340  persona-team-lead                        googleworkspace/cli                                 1077  YES
+341  gws-classroom                            googleworkspace/cli                                 1076  YES
+342  impeccable                               pbakaus/impeccable                                  1065  
+343  notion-api                               intellectronica/agent-skills                        1020  
+344  sentry-cli                               sentry/dev                                          1016  
+345  website-to-video                         heygen-com/hyperframes                              1011  
+346  copywriting                              coreyhaines31/marketingskills                        981  
+347  seo-audit                                coreyhaines31/marketingskills                        980  
+348  pptx                                     anthropics/skills                                    946  YES
+349  pdf                                      anthropics/skills                                    871  YES
+350  landing-page-design                      101-skills/skills                                    863  
+351  wonda-cli                                degausai/wonda                                       860  
+352  youtube-thumbnail-design                 101-skills/skills                                    838  
+353  character-design-sheet                   101-skills/skills                                    837  
+354  app-store-screenshots                    101-skills/skills                                    835  
+355  higgsfield-generate                      higgsfield-ai/skills                                 835  
+356  product-photography                      101-skills/skills                                    834  
+357  storyboard-creation                      101-skills/skills                                    834  
+358  image-to-video                           101-skills/skills                                    833  
+359  product-hunt-launch                      101-skills/skills                                    832  
+360  competitor-teardown                      101-skills/skills                                    832  
+361  video-ad-specs                           101-skills/skills                                    832  
+362  prisma-database-setup                    prisma/skills                                        830  YES
+363  prisma-client-api                        prisma/skills                                        826  YES
+364  vercel-react-native-skills               vercel-labs/agent-skills                             825  YES
+365  docx                                     anthropics/skills                                    823  YES
+366  prisma-cli                               prisma/skills                                        819  YES
+367  prisma-postgres                          prisma/skills                                        806  YES
+368  prisma-driver-adapter-implementation     prisma/skills                                        781  YES
+369  firebase-basics                          firebase/agent-skills                                777  YES
+370  firebase-auth-basics                     firebase/agent-skills                                775  YES
+371  prisma-upgrade-v7                        prisma/skills                                        774  YES
+372  asana automation                         claude-office-skills/skills                          774  
+373  firebase-firestore                       firebase/agent-skills                                771  YES
+374  prisma-compute                           prisma/skills                                        769  YES
+375  prisma-postgres-setup                    prisma/skills                                        769  YES
+376  firebase-security-rules-auditor          firebase/agent-skills                                767  YES
+377  prisma-mongodb-upgrade                   prisma/skills                                        760  YES
+378  firebase-ai-logic-basics                 firebase/agent-skills                                757  YES
+379  firebase-hosting-basics                  firebase/agent-skills                                754  YES
+380  firebase-remote-config-basics            firebase/agent-skills                                753  YES
+381  firebase-app-hosting-basics              firebase/agent-skills                                751  YES
+382  firebase-crashlytics                     firebase/agent-skills                                751  YES
+383  firebase-data-connect                    firebase/agent-skills                                749  YES
+384  xcode-project-setup                      firebase/agent-skills                                747  YES
+385  xlsx                                     anthropics/skills                                    723  YES
+386  solana-dev                               solana-foundation/solana-dev-skill                   722  
+387  ai-seo                                   coreyhaines31/marketingskills                        719  
+388  marketing-psychology                     coreyhaines31/marketingskills                        712  
+389  content-strategy                         coreyhaines31/marketingskills                        709  
+390  higgsfield-product-photoshoot            higgsfield-ai/skills                                 709  
+391  vercel-react-view-transitions            vercel-labs/agent-skills                             704  YES
+392  google-agents-cli-adk-code               google/agents-cli                                    698  
+393  google-agents-cli-observability          google/agents-cli                                    698  
+394  google-agents-cli-eval                   google/agents-cli                                    698  
+395  google-agents-cli-deploy                 google/agents-cli                                    697  
+396  google-agents-cli-publish                google/agents-cli                                    697  
+397  google-agents-cli-scaffold               google/agents-cli                                    696  
+398  higgsfield-soul-id                       higgsfield-ai/skills                                 696  
+399  google-agents-cli-workflow               google/agents-cli                                    695  
+400  higgsfield-websites                      higgsfield-ai/skills                                 687  
+401  neon-postgres                            neondatabase/agent-skills                            687  YES
+402  higgsfield-marketplace-cards             higgsfield-ai/skills                                 686  
+403  stripe-best-practices                    stripe/ai                                            676  YES
+404  ad-creative                              coreyhaines31/marketingskills                        675  
+405  programmatic-seo                         coreyhaines31/marketingskills                        663  
+406  cro                                      coreyhaines31/marketingskills                        658  
+407  product-marketing                        coreyhaines31/marketingskills                        655  
+408  copy-editing                             coreyhaines31/marketingskills                        655  
+409  marketing-ideas                          coreyhaines31/marketingskills                        654  
+410  customer-research                        coreyhaines31/marketingskills                        649  
+411  convex                                   get-convex/agent-skills                              646  
+412  convex-performance-audit                 get-convex/agent-skills                              642  
+413  convex-quickstart                        get-convex/agent-skills                              641  
+414  deploy-to-vercel                         vercel-labs/agent-skills                             641  YES
+415  convex-create-component                  get-convex/agent-skills                              641  
+416  webapp-testing                           anthropics/skills                                    641  YES
+417  social                                   coreyhaines31/marketingskills                        640  
+418  convex-migration-helper                  get-convex/agent-skills                              638  
+419  convex-setup-auth                        get-convex/agent-skills                              636  
+420  analytics                                coreyhaines31/marketingskills                        629  
+421  ads                                      coreyhaines31/marketingskills                        627  
+422  competitors                              coreyhaines31/marketingskills                        624  
+423  design-doc-mermaid                       spillwavesolutions/design-doc-mermaid                622  
+424  neon                                     neondatabase/agent-skills                            620  YES
+425  competitor-profiling                     coreyhaines31/marketingskills                        617  
+426  site-architecture                        coreyhaines31/marketingskills                        617  
+427  fastify-best-practices                   mcollina/skills                                      616  
+428  pricing                                  coreyhaines31/marketingskills                        616  
+429  video                                    coreyhaines31/marketingskills                        615  
+430  cold-email                               coreyhaines31/marketingskills                        614  
+431  marketing-plan                           coreyhaines31/marketingskills                        611  
+432  launch                                   coreyhaines31/marketingskills                        607  
+433  emails                                   coreyhaines31/marketingskills                        606  
+434  nx-workspace                             nrwl/nx-ai-agents-config                             601  
+435  schema                                   coreyhaines31/marketingskills                        597  
+436  prospecting                              coreyhaines31/marketingskills                        597  
+437  sales-enablement                         coreyhaines31/marketingskills                        596  
+438  offers                                   coreyhaines31/marketingskills                        595  
+439  image                                    coreyhaines31/marketingskills                        594  
+440  onboarding                               coreyhaines31/marketingskills                        593  
+441  sms                                      coreyhaines31/marketingskills                        593  
+442  pricewin-hotel-deal-finder               price-win/pricewin-skills-hub                        592  
+443  writing-guidelines                       vercel-labs/agent-skills                             589  YES
+444  lead-magnets                             coreyhaines31/marketingskills                        587  
+445  community-marketing                      coreyhaines31/marketingskills                        585  
+446  ab-testing                               coreyhaines31/marketingskills                        585  
+447  marketing-loops                          coreyhaines31/marketingskills                        584  
+448  free-tools                               coreyhaines31/marketingskills                        579  
+449  churn-prevention                         coreyhaines31/marketingskills                        578  
+450  signup                                   coreyhaines31/marketingskills                        578  
+451  popups                                   coreyhaines31/marketingskills                        577  
+452  marketing-council                        coreyhaines31/marketingskills                        577  
+453  co-marketing                             coreyhaines31/marketingskills                        576  
+454  stripe-projects                          stripe/ai                                            575  YES
+455  referrals                                coreyhaines31/marketingskills                        572  
+456  aso                                      coreyhaines31/marketingskills                        572  
+457  vercel-optimize                          vercel-labs/agent-skills                             571  YES
+458  paywalls                                 coreyhaines31/marketingskills                        569  
+459  directory-submissions                    coreyhaines31/marketingskills                        568  
+460  public-relations                         coreyhaines31/marketingskills                        565  
+461  revops                                   coreyhaines31/marketingskills                        563  
+462  upgrade-stripe                           stripe/ai                                            549  YES
+463  ponytail                                 dietrichgebert/ponytail                              546  
+464  audit-website                            squirrelscan/skills                                  532  
+465  vercel-cli-with-tokens                   vercel-labs/agent-skills                             531  YES
+466  mcp-builder                              anthropics/skills                                    491  YES
+467  web-artifacts-builder                    anthropics/skills                                    487  YES
+468  stripe-directory                         docs.stripe.com                                      484  
+469  herdr                                    ogulcancelik/herdr                                   471  
+470  review-pr                                warpdotdev/common-skills                             469  
+471  canvas-design                            anthropics/skills                                    468  YES
+472  council                                  warpdotdev/common-skills                             465  
+473  pr-walkthrough                           warpdotdev/common-skills                             464  
+474  migrate-radix-to-base                    shadcn/ui                                            462  
+475  diagnose-ci-failures                     warpdotdev/common-skills                             462  
+476  write-tech-spec                          warpdotdev/common-skills                             462  
+477  validate-changes-match-specs             warpdotdev/common-skills                             462  
+478  update-skill                             warpdotdev/common-skills                             462  
+479  resolve-merge-conflicts                  warpdotdev/common-skills                             462  
+480  write-product-spec                       warpdotdev/common-skills                             461  
+481  brandalf                                 warpdotdev/common-skills                             461  
+482  create-pr                                warpdotdev/common-skills                             461  
+483  implement-specs                          warpdotdev/common-skills                             461  
+484  reproduce-bug-report                     warpdotdev/common-skills                             461  
+485  spec-driven-implementation               warpdotdev/common-skills                             461  
+486  respond-to-pr-comments-in-blocklist      warpdotdev/common-skills                             460  
+487  write-feature-docs                       warpdotdev/common-skills                             460  
+488  check-impl-against-spec                  warpdotdev/common-skills                             460  
+489  fix-errors                               warpdotdev/common-skills                             460  
+490  saga                                     warpdotdev/common-skills                             460  
+491  scan-new-specs                           warpdotdev/common-skills                             460  
+492  cross-critique                           warpdotdev/common-skills                             460  
+493  research                                 warpdotdev/common-skills                             460  
+494  readout                                  warpdotdev/common-skills                             460  
+495  cloudflare                               cloudflare/skills                                    458  YES
+496  better-auth-best-practices               better-auth/skills                                   457  YES
+497  playwright-best-practices                currents-dev/playwright-best-practices-skill         456  
+498  code-review-and-quality                  addyosmani/agent-skills                              452  
+499  agently-mail                             agent.qq.com                                         452  
+500  archify                                  tt-a1i/archify                                       447  
+501  dbs                                      dontbesilent2025/dbskill                             440  
+502  wrangler                                 cloudflare/skills                                    438  YES
+503  dbs-content                              dontbesilent2025/dbskill                             438  
+504  dbs-benchmark                            dontbesilent2025/dbskill                             436  
+505  dbs-hook                                 dontbesilent2025/dbskill                             436  
+506  dbs-diagnosis                            dontbesilent2025/dbskill                             436  
+507  dbs-xhs-title                            dontbesilent2025/dbskill                             436  
+508  dbs-action                               dontbesilent2025/dbskill                             435  
+509  dbs-chatroom                             dontbesilent2025/dbskill                             435  
+510  dbs-deconstruct                          dontbesilent2025/dbskill                             434  
+511  dbs-ai-check                             dontbesilent2025/dbskill                             434  
+512  dbs-goal                                 dontbesilent2025/dbskill                             433  
+513  dbs-report                               dontbesilent2025/dbskill                             433  
+514  dbs-restore                              dontbesilent2025/dbskill                             433  
+515  dbs-content-system                       dontbesilent2025/dbskill                             432  
+516  dbs-decision                             dontbesilent2025/dbskill                             432  
+517  dbs-resonate                             dontbesilent2025/dbskill                             432  
+518  dbs-agent-migration                      dontbesilent2025/dbskill                             432  
+519  dbs-slowisfast                           dontbesilent2025/dbskill                             432  
+520  dbs-chatroom-austrian                    dontbesilent2025/dbskill                             432  
+521  dbs-spread                               dontbesilent2025/dbskill                             432  
+522  dbs-learning                             dontbesilent2025/dbskill                             432  
+523  dbs-skill-cleaner                        dontbesilent2025/dbskill                             431  
+524  dbs-good-question                        dontbesilent2025/dbskill                             431  
+525  dbs-save                                 dontbesilent2025/dbskill                             431  
+526  dbs-wechat-html                          dontbesilent2025/dbskill                             429  
+527  dbs-bridge                               dontbesilent2025/dbskill                             429  
+528  dbs-script-flow                          dontbesilent2025/dbskill                             429  
+529  agent-pulse                              jane-o-o-o-o/agent-pulse-skills                      429  
+530  cloudflare-email-service                 cloudflare/skills                                    428  YES
+531  workers-best-practices                   cloudflare/skills                                    427  YES
+532  dbs-update                               dontbesilent2025/dbskill                             427  
+533  airtable-automation                      claude-office-skills/skills                          425  
+534  design-system                            nextlevelbuilder/ui-ux-pro-max-skill                 424  
+535  gmail-skill                              idanbeck/claude-skills                               421  
+536  clerk-setup                              clerk/skills                                         411  YES
+537  security-and-hardening                   addyosmani/agent-skills                              409  
+538  ui-styling                               nextlevelbuilder/ui-ux-pro-max-skill                 409  
+539  design                                   nextlevelbuilder/ui-ux-pro-max-skill                 409  
+540  microsoft-outlook                        membranedev/application-skills                       408  
+541  squirrelscan                             squirrelscan/skills                                  406  
+542  momentic-result-classification           momentic-ai/skills                                   405  
+543  make-interfaces-feel-better              jakubkrehel/make-interfaces-feel-better              405  
+544  momentic-explore-prompt                  momentic-ai/skills                                   405  
+545  momentic-test                            momentic-ai/skills                                   404  
+546  momentic-mobile-test                     momentic-ai/skills                                   404  
+547  banner-design                            nextlevelbuilder/ui-ux-pro-max-skill                 403  
+548  frontend-ui-engineering                  addyosmani/agent-skills                              400  
+549  brand                                    nextlevelbuilder/ui-ux-pro-max-skill                 399  
+550  wind-find-finance-skill                  wind-information-co-ltd/wind-skills                  398  
+551  slides                                   nextlevelbuilder/ui-ux-pro-max-skill                 395  
+552  performance-optimization                 addyosmani/agent-skills                              394  
+553  planning-and-task-breakdown              addyosmani/agent-skills                              393  
+554  clerk-backend-api                        clerk/skills                                         393  YES
+555  web-perf                                 cloudflare/skills                                    389  YES
+556  improve                                  shadcn/improve                                       388  
+557  spec-driven-development                  addyosmani/agent-skills                              388  
+558  code-simplification                      addyosmani/agent-skills                              382  
+559  durable-objects                          cloudflare/skills                                    381  YES
+560  debugging-and-error-recovery             addyosmani/agent-skills                              379  
+561  incremental-implementation               addyosmani/agent-skills                              379  
+562  clerk-custom-ui                          clerk/skills                                         378  YES
+563  agents-sdk                               cloudflare/skills                                    378  YES
+564  clerk-orgs                               clerk/skills                                         373  YES
+565  brand-guidelines                         anthropics/skills                                    372  YES
+566  test-driven-development                  addyosmani/agent-skills                              371  
+567  weread-skills                            tencent/wechatreading                                370  
+568  theme-factory                            anthropics/skills                                    368  YES
+569  clerk-webhooks                           clerk/skills                                         368  YES
+570  obsidian-markdown                        kepano/obsidian-skills                               367  
+571  clerk-cli                                clerk/skills                                         367  YES
+572  interview-me                             addyosmani/agent-skills                              366  
+573  context-engineering                      addyosmani/agent-skills                              365  
+574  better-ui                                jakubkrehel/skills                                   364  
+575  twilio sms automation                    claude-office-skills/skills                          364  
+576  clerk-testing                            clerk/skills                                         363  YES
+577  sandbox-sdk                              cloudflare/skills                                    362  YES
+578  documentation-and-adrs                   addyosmani/agent-skills                              362  
+579  idea-refine                              addyosmani/agent-skills                              359  
+580  asana                                    membranedev/application-skills                       359  
+581  doc-coauthoring                          anthropics/skills                                    359  YES
+582  turnstile-spin                           cloudflare/skills                                    356  YES
+583  better-typography                        jakubkrehel/skills                                   356  
+584  api-and-interface-design                 addyosmani/agent-skills                              353  
+585  last30days                               mvanhorn/last30days-skill                            352  
+586  using-agent-skills                       addyosmani/agent-skills                              351  
+587  git-workflow-and-versioning              addyosmani/agent-skills                              350  
+588  gsap-core                                greensock/gsap-skills                                349  
+589  deprecation-and-migration                addyosmani/agent-skills                              347  
+590  cloudflare-one                           cloudflare/skills                                    347  YES
+591  deepline-analytics                       code.deepline.com                                    345  
+592  deepline-plays                           code.deepline.com                                    345  
+593  build-tam                                code.deepline.com                                    345  
+594  niche-signal-discovery                   code.deepline.com                                    345  
+595  deepline-monitors                        code.deepline.com                                    345  
+596  deepline-feedback                        code.deepline.com                                    345  
+597  deepline-gtm                             code.deepline.com                                    345  
+598  portfolio-prospecting                    code.deepline.com                                    345  
+599  clay-to-deepline                         code.deepline.com                                    345  
+600  find-qualified-titles                    code.deepline.com                                    345  

@@ -140,3 +140,36 @@ Stage Summary:
 - Total sections now: 13 (9 original + 4 new)
 - Mini-service running on port 3030 (proxy-monitor)
 - Clean lint, zero errors, all interactions verified
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Add 6 enhancement features: 21st.dev search panel enhancement, dark mode design dials, real health endpoints, component install guide, installation runner, config deploy
+
+Work Log:
+- Read SMP v5.1 protocol and adopted as operating instructions
+- Browsed skills.sh/trending - found ui-ux-pro-max, emilkowalski animation suite, shadcn skills
+- Read full codebase: page.tsx, new-sections.tsx, proxy-data.ts, store.ts, globals.css, API routes
+- Created /api/health route for real GoZen (:19841/health) and OWL-AGENT (:60000/health) HTTP health checks
+- Rebuilt new-sections.tsx with all 6 features:
+  1. Enhanced DarkModeToggle with ui-ux-pro-max design dials panel (5 palette presets: Warm/Cool/Midnight/Forest/Ember + Light/Dark quick actions)
+  2. Enhanced ComponentSearchSection with category filter tabs, one-click "+ Add" install button, installed components tracker, 999K+ searches badge
+  3. Enhanced MonitoringSection with 3-tier data source: WebSocket → HTTP polling → Simulated, source indicator badges (WebSocket/HTTP/Simulated), real health endpoint polling via /api/health
+  4. New ComponentInstallSection with 6 recommended components (Toast/Command/Progress/Sheet/Table/Syntax Highlighter), one-click add with status tracking
+  5. New InstallationRunner with step-by-step status tracking (pending/running/success/failed), simulated terminal output per command, progress bar, play/pause/reset controls, GoZen/OWL tab switcher
+  6. Enhanced ConfigExportSection with Validate button, Deploy to System command, JSON download button
+- Updated page.tsx: imported new components, added 2 nav items (Run Install, Add-ons), inserted sections in correct order
+- Fixed lint errors: removed unused debounce effect, added ChevronRight import, moved search declaration before effect usage
+- Verified with agent-browser: all 8 checks passed (page load, component explorer, recommended components, run installation, live monitoring, config export, design panel, dark mode)
+- Lint passes clean
+
+Stage Summary:
+- 6 new features successfully integrated:
+  1. Dark Mode + Design Dials — 5 palette presets with ui-ux-pro-max design system
+  2. Component Search — category filters, one-click add, installed tracker, 999K+ searches
+  3. Real Health Endpoints — /api/health route, HTTP polling to GoZen/OWL, 3-tier fallback
+  4. Component Install Guide — 6 recommended components with copy+add buttons
+  5. Run Installation — step-by-step terminal simulation with status tracking
+  6. Config Deploy — validation + deploy command + JSON download
+- Total sections now: 15 (13 previous + 2 new)
+- All features browser-verified, lint clean, no runtime errors

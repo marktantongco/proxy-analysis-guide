@@ -1,0 +1,612 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import { useState, useRef, useEffect, useCallback } from "react";
+     4→     4→import { motion, AnimatePresence, useInView } from "framer-motion";
+     5→     5→import { io, Socket } from "socket.io-client";
+     6→     6→import {
+     7→     7→  Search, Download, Moon, Sun, Activity, Wifi, WifiOff,
+     8→     8→  Package, ArrowUpRight, Copy, Check, RefreshCw, Clock,
+     9→     9→  AlertTriangle, CheckCircle2, XCircle, Cpu, Radio,
+    10→    10→  Layers, Server, Terminal
+    11→    11→} from "lucide-react";
+    12→    12→import { Button } from "@/components/ui/button";
+    13→    13→import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+    14→    14→import { Badge } from "@/components/ui/badge";
+    15→    15→import { Input } from "@/components/ui/input";
+    16→    16→import { Progress } from "@/components/ui/progress";
+    17→    17→import { useTheme } from "next-themes";
+    18→    18→import { unifiedStackConfig } from "@/lib/proxy-data";
+    19→    19→
+    20→    20→/* ──────────────── SHARED ANIMATIONS ────────────────────────────────── */
+    21→    21→
+    22→    22→const fadeUp = {
+    23→    23→  hidden: { opacity: 0, y: 30 },
+    24→    24→  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+    25→    25→};
+    26→    26→
+    27→    27→const staggerContainer = {
+    28→    28→  hidden: { opacity: 0 },
+    29→    29→  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
+    30→    30→};
+    31→    31→
+    32→    32→const staggerItem = {
+    33→    33→  hidden: { opacity: 0, y: 20 },
+    34→    34→  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+    35→    35→};
+    36→    36→
+    37→    37→/* ════════════════════════════════════════════════════════════════════════════
+    38→    38→   FEATURE 1: Dark Mode Toggle (ui-ux-pro-max design dials)
+    39→    39→   ════════════════════════════════════════════════════════════════════════════ */
+    40→    40→
+    41→    41→export function DarkModeToggle() {
+    42→    42→  const { theme, setTheme } = useTheme();
+    43→    43→
+    44→    44→  // Toggle handler — theme may be undefined during SSR, so default to "light"
+    45→    45→  const isDark = theme === "dark";
+    46→    46→
+    47→    47→  return (
+    48→    48→    <Button
+    49→    49→      variant="ghost"
+    50→    50→      size="sm"
+    51→    51→      onClick={() => setTheme(isDark ? "light" : "dark")}
+    52→    52→      className="relative w-9 h-9 rounded-full border border-[#d6d1c2] dark:border-[#3a3a3e] hover:bg-[#f6f6f6] dark:hover:bg-[#2a2a2e]"
+    53→    53→    >
+    54→    54→      <AnimatePresence mode="wait">
+    55→    55→        {isDark ? (
+    56→    56→          <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+    57→    57→            <Sun className="h-4 w-4 text-[#ae964d]" />
+    58→    58→          </motion.div>
+    59→    59→        ) : (
+    60→    60→          <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+    61→    61→            <Moon className="h-4 w-4 text-[#6b634d]" />
+    62→    62→          </motion.div>
+    63→    63→        )}
+    64→    64→      </AnimatePresence>
+    65→    65→    </Button>
+    66→    66→  );
+    67→    67→}
+    68→    68→
+    69→    69→/* ════════════════════════════════════════════════════════════════════════════
+    70→    70→   FEATURE 2: 21st.dev Component Search Panel
+    71→    71→   ════════════════════════════════════════════════════════════════════════════ */
+    72→    72→
+    73→    73→interface SearchResult {
+    74→    74→  name: string;
+    75→    75→  preview_url: string | null;
+    76→    76→  demo_id: number;
+    77→    77→  component_data: {
+    78→    78→    id: number;
+    79→    79→    name: string;
+    80→    80→    component_slug: string;
+    81→    81→    library_id: string;
+    82→    82→    description: string;
+    83→    83→    install_command: string;
+    84→    84→  };
+    85→    85→  component_user_data: {
+    86→    86→    name: string;
+    87→    87→    username: string;
+    88→    88→    image_url: string | null;
+    89→    89→  };
+    90→    90→  usage_count: number;
+    91→    91→}
+    92→    92→
+    93→    93→function ComponentCard({ result }: { result: SearchResult }) {
+    94→    94→  const [copied, setCopied] = useState(false);
+    95→    95→
+    96→    96→  const handleCopy = useCallback(() => {
+    97→    97→    navigator.clipboard.writeText(result.component_data.install_command);
+    98→    98→    setCopied(true);
+    99→    99→    setTimeout(() => setCopied(false), 2000);
+   100→   100→  }, [result.component_data.install_command]);
+   101→   101→
+   102→   102→  return (
+   103→   103→    <Card className="bg-white dark:bg-[#2a2a2e] border border-[#d6d1c2] dark:border-[#3a3a3e] hover:shadow-md transition-shadow">
+   104→   104→      <CardContent className="p-4">
+   105→   105→        <div className="flex items-start justify-between gap-2">
+   106→   106→          <div className="min-w-0 flex-1">
+   107→   107→            <div className="flex items-center gap-2 flex-wrap">
+   108→   108→              <span className="font-semibold text-sm text-[#151513] dark:text-[#e8e6e1]">{result.component_data.name}</span>
+   109→   109→              <Badge variant="outline" className="text-xs border-[#92751f]/30 text-[#92751f] dark:text-[#ae964d] dark:border-[#ae964d]/30">
+   110→   110→                {result.component_user_data.username}
+   111→   111→              </Badge>
+   112→   112→            </div>
+   113→   113→            <p className="text-xs text-[#86837c] dark:text-[#a0a0a0] mt-1 line-clamp-2">{result.component_data.description}</p>
+   114→   114→          </div>
+   115→   115→          <div className="text-right flex-shrink-0">
+   116→   116→            <div className="text-xs text-[#86837c] dark:text-[#a0a0a0]">
+   117→   117→              {(result.usage_count / 1000).toFixed(1)}K uses
+   118→   118→            </div>
+   119→   119→          </div>
+   120→   120→        </div>
+   121→   121→        <div className="mt-3 relative bg-[#1a1a2e] dark:bg-[#0d0d1a] text-[#e0e0e0] rounded-lg p-2 font-mono text-xs overflow-x-auto group">
+   122→   122→          <code className="whitespace-nowrap">{result.component_data.install_command}</code>
+   123→   123→          <Button
+   124→   124→            variant="ghost"
+   125→   125→            size="sm"
+   126→   126→            className="absolute top-0.5 right-0.5 h-6 w-6 p-0 text-[#86837c] hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+   127→   127→            onClick={handleCopy}
+   128→   128→          >
+   129→   129→            {copied ? <Check className="h-3 w-3 text-[#3f7450]" /> : <Copy className="h-3 w-3" />}
+   130→   130→          </Button>
+   131→   131→        </div>
+   132→   132→      </CardContent>
+   133→   133→    </Card>
+   134→   134→  );
+   135→   135→}
+   136→   136→
+   137→   137→export function ComponentSearchSection() {
+   138→   138→  const ref = useRef(null);
+   139→   139→  const isInView = useInView(ref, { once: true, margin: "-50px" });
+   140→   140→  const [query, setQuery] = useState("");
+   141→   141→  const [results, setResults] = useState<SearchResult[]>([]);
+   142→   142→  const [loading, setLoading] = useState(false);
+   143→   143→  const [totalPages, setTotalPages] = useState(0);
+   144→   144→  const [currentPage, setCurrentPage] = useState(1);
+   145→   145→  const [requestsLeft, setRequestsLeft] = useState<number | null>(null);
+   146→   146→
+   147→   147→  const search = useCallback(async (searchQuery: string, page = 1) => {
+   148→   148→    if (!searchQuery.trim()) { setResults([]); return; }
+   149→   149→    setLoading(true);
+   150→   150→    try {
+   151→   151→      const res = await fetch("/api/components?XTransformPort=3030", {
+   152→   152→        method: "POST",
+   153→   153→        headers: { "Content-Type": "application/json" },
+   154→   154→        body: JSON.stringify({ search: searchQuery, page, per_page: 12 }),
+   155→   155→      });
+   156→   156→      // Fallback: try direct 21st.dev API route (no port transform needed for Next.js API)
+   157→   157→      const data = await res.json();
+   158→   158→      setResults(data.results || []);
+   159→   159→      if (data.metadata) {
+   160→   160→        setTotalPages(data.metadata.pagination?.total_pages || 0);
+   161→   161→        setRequestsLeft(data.metadata.requests_remaining);
+   162→   162→      }
+   163→   163→    } catch {
+   164→   164→      // Try without port transform
+   165→   165→      try {
+   166→   166→        const res2 = await fetch("/api/components", {
+   167→   167→          method: "POST",
+   168→   168→          headers: { "Content-Type": "application/json" },
+   169→   169→          body: JSON.stringify({ search: searchQuery, page, per_page: 12 }),
+   170→   170→        });
+   171→   171→        const data = await res2.json();
+   172→   172→        setResults(data.results || []);
+   173→   173→        if (data.metadata) {
+   174→   174→          setTotalPages(data.metadata.pagination?.total_pages || 0);
+   175→   175→          setRequestsLeft(data.metadata.requests_remaining);
+   176→   176→        }
+   177→   177→      } catch {
+   178→   178→        setResults([]);
+   179→   179→      }
+   180→   180→    }
+   181→   181→    setLoading(false);
+   182→   182→  }, []);
+   183→   183→
+   184→   184→  const handleSearch = useCallback(() => {
+   185→   185→    setCurrentPage(1);
+   186→   186→    search(query, 1);
+   187→   187→  }, [query, search]);
+   188→   188→
+   189→   189→  return (
+   190→   190→    <section ref={ref} id="components" className="py-12 sm:py-20 bg-white dark:bg-[#1a1a1e]">
+   191→   191→      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   192→   192→        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+   193→   193→          <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+   194→   194→            <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] dark:text-[#ae964d]">Component Explorer</h2>
+   195→   195→            <Badge variant="outline" className="text-xs border-[#537ba4]/30 text-[#537ba4]">
+   196→   196→              <Package className="h-3 w-3 mr-1" /> Powered by 21st.dev
+   197→   197→            </Badge>
+   198→   198→          </div>
+   199→   199→          <p className="text-[#86837c] dark:text-[#a0a0a0] mb-6 text-sm sm:text-base">
+   200→   200→            Search 1400+ React UI components from the 21st.dev registry. Find, preview, and install with one command.
+   201→   201→          </p>
+   202→   202→        </motion.div>
+   203→   203→
+   204→   204→        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+   205→   205→          <div className="flex gap-2 mb-4">
+   206→   206→            <div className="flex-1 relative">
+   207→   207→              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#86837c] dark:text-[#a0a0a0]" />
+   208→   208→              <Input
+   209→   209→                placeholder="Search components (button, card, dialog...)"
+   210→   210→                value={query}
+   211→   211→                onChange={(e) => setQuery(e.target.value)}
+   212→   212→                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+   213→   213→                className="pl-10 bg-[#f6f6f6] dark:bg-[#2a2a2e] border-[#d6d1c2] dark:border-[#3a3a3e] text-[#151513] dark:text-[#e8e6e1]"
+   214→   214→              />
+   215→   215→            </div>
+   216→   216→            <Button onClick={handleSearch} disabled={loading} className="bg-[#6b634d] hover:bg-[#5a5540] text-white">
+   217→   217→              {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+   218→   218→            </Button>
+   219→   219→          </div>
+   220→   220→
+   221→   221→          {requestsLeft !== null && (
+   222→   222→            <div className="flex items-center gap-2 mb-4 text-xs text-[#86837c] dark:text-[#a0a0a0]">
+   223→   223→              <span>API calls remaining: {requestsLeft.toLocaleString()}</span>
+   224→   224→              <span className="text-[#d6d1c2]">|</span>
+   225→   225→              <span>Free plan: 1M requests/month</span>
+   226→   226→            </div>
+   227→   227→          )}
+   228→   228→        </motion.div>
+   229→   229→
+   230→   230→        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+   231→   231→          {results.map((result, i) => (
+   232→   232→            <motion.div key={`${result.component_data.component_slug}-${result.demo_id || i}`} variants={staggerItem}>
+   233→   233→              <ComponentCard result={result} />
+   234→   234→            </motion.div>
+   235→   235→          ))}
+   236→   236→        </motion.div>
+   237→   237→
+   238→   238→        {results.length === 0 && query && !loading && (
+   239→   239→          <div className="text-center py-8 text-[#86837c] dark:text-[#a0a0a0]">
+   240→   240→            <Package className="h-12 w-12 mx-auto mb-2 opacity-30" />
+   241→   241→            <p className="text-sm">Type a search term and press Enter to find components</p>
+   242→   242→            <p className="text-xs mt-1">Try: &quot;button&quot;, &quot;card&quot;, &quot;dialog&quot;, &quot;animation&quot;</p>
+   243→   243→          </div>
+   244→   244→        )}
+   245→   245→
+   246→   246→        {totalPages > 1 && (
+   247→   247→          <div className="flex items-center justify-center gap-2 mt-6">
+   248→   248→            <Button
+   249→   249→              variant="outline"
+   250→   250→              size="sm"
+   251→   251→              disabled={currentPage <= 1}
+   252→   252→              onClick={() => { const p = currentPage - 1; setCurrentPage(p); search(query, p); }}
+   253→   253→              className="border-[#d6d1c2] dark:border-[#3a3a3e]"
+   254→   254→            >
+   255→   255→              Previous
+   256→   256→            </Button>
+   257→   257→            <span className="text-sm text-[#86837c] dark:text-[#a0a0a0]">Page {currentPage} of {totalPages}</span>
+   258→   258→            <Button
+   259→   259→              variant="outline"
+   260→   260→              size="sm"
+   261→   261→              disabled={currentPage >= totalPages}
+   262→   262→              onClick={() => { const p = currentPage + 1; setCurrentPage(p); search(query, p); }}
+   263→   263→              className="border-[#d6d1c2] dark:border-[#3a3a3e]"
+   264→   264→            >
+   265→   265→              Next
+   266→   266→            </Button>
+   267→   267→          </div>
+   268→   268→        )}
+   269→   269→      </div>
+   270→   270→    </section>
+   271→   271→  );
+   272→   272→}
+   273→   273→
+   274→   274→/* ════════════════════════════════════════════════════════════════════════════
+   275→   275→   FEATURE 3: JSON Config Export
+   276→   276→   ════════════════════════════════════════════════════════════════════════════ */
+   277→   277→
+   278→   278→export function ConfigExportSection() {
+   279→   279→  const [copied, setCopied] = useState(false);
+   280→   280→  const ref = useRef(null);
+   281→   281→  const isInView = useInView(ref, { once: true, margin: "-50px" });
+   282→   282→
+   283→   283→  const handleCopy = useCallback(() => {
+   284→   284→    navigator.clipboard.writeText(unifiedStackConfig);
+   285→   285→    setCopied(true);
+   286→   286→    setTimeout(() => setCopied(false), 2000);
+   287→   287→  }, []);
+   288→   288→
+   289→   289→  const handleDownload = useCallback(() => {
+   290→   290→    const blob = new Blob([unifiedStackConfig], { type: "application/json" });
+   291→   291→    const url = URL.createObjectURL(blob);
+   292→   292→    const a = document.createElement("a");
+   293→   293→    a.href = url;
+   294→   294→    a.download = "zen-owl-unified-config.json";
+   295→   295→    document.body.appendChild(a);
+   296→   296→    a.click();
+   297→   297→    document.body.removeChild(a);
+   298→   298→    URL.revokeObjectURL(url);
+   299→   299→  }, []);
+   300→   300→
+   301→   301→  return (
+   302→   302→    <motion.div ref={ref} variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mt-8">
+   303→   303→      <Card className="border-[#3f7450]/30 dark:border-[#3f7450]/20 dark:bg-[#2a2a2e]">
+   304→   304→        <CardHeader className="pb-2">
+   305→   305→          <div className="flex items-center justify-between flex-wrap gap-2">
+   306→   306→            <CardTitle className="text-base sm:text-lg text-[#3f7450] dark:text-[#5aad6a] flex items-center gap-2">
+   307→   307→              <Layers className="h-5 w-5" /> Unified Stack Configuration
+   308→   308→            </CardTitle>
+   309→   309→            <div className="flex gap-2">
+   310→   310→              <Button variant="outline" size="sm" onClick={handleCopy} className="border-[#3f7450]/30 text-[#3f7450] dark:text-[#5aad6a] dark:border-[#3f7450]/20">
+   311→   311→                {copied ? <Check className="h-3.5 w-3.5 mr-1" /> : <Copy className="h-3.5 w-3.5 mr-1" />}
+   312→   312→                {copied ? "Copied!" : "Copy"}
+   313→   313→              </Button>
+   314→   314→              <Button size="sm" onClick={handleDownload} className="bg-[#3f7450] hover:bg-[#2d5a3b] text-white">
+   315→   315→                <Download className="h-3.5 w-3.5 mr-1" /> Download JSON
+   316→   316→              </Button>
+   317→   317→            </div>
+   318→   318→          </div>
+   319→   319→          <CardDescription className="text-[#86837c] dark:text-[#a0a0a0]">GoZen → OWL-AGENT → Upstream wiring in ~/.zen/zen.json</CardDescription>
+   320→   320→        </CardHeader>
+   321→   321→        <CardContent>
+   322→   322→          <div className="relative bg-[#1a1a2e] dark:bg-[#0d0d1a] text-[#e0e0e0] rounded-lg p-3 font-mono text-xs sm:text-sm overflow-x-auto max-h-64">
+   323→   323→            <pre className="whitespace-pre">{unifiedStackConfig}</pre>
+   324→   324→          </div>
+   325→   325→          <div className="mt-3 text-xs text-[#86837c] dark:text-[#a0a0a0]">
+   326→   326→            <strong>Startup sequence:</strong> Always start OWL-AGENT first, then GoZen. Use the JSON download to skip manual editing.
+   327→   327→          </div>
+   328→   328→        </CardContent>
+   329→   329→      </Card>
+   330→   330→    </motion.div>
+   331→   331→  );
+   332→   332→}
+   333→   333→
+   334→   334→/* ════════════════════════════════════════════════════════════════════════════
+   335→   335→   FEATURE 4: WebSocket Real-Time Monitoring Dashboard
+   336→   336→   ════════════════════════════════════════════════════════════════════════════ */
+   337→   337→
+   338→   338→interface ProxyMonitorState {
+   339→   339→  name: string;
+   340→   340→  status: "healthy" | "degraded" | "down";
+   341→   341→  ram: number;
+   342→   342→  requestsPerMin: number;
+   343→   343→  latencyMs: number;
+   344→   344→  uptime: string;
+   345→   345→  port: number;
+   346→   346→  activeConnections: number;
+   347→   347→  circuitBreaker: "closed" | "open" | "half-open";
+   348→   348→  lastError: string | null;
+   349→   349→}
+   350→   350→
+   351→   351→interface LogEntry {
+   352→   352→  timestamp: string;
+   353→   353→  proxy: string;
+   354→   354→  method: string;
+   355→   355→  path: string;
+   356→   356→  status: number;
+   357→   357→  latency: number;
+   358→   358→  model: string;
+   359→   359→}
+   360→   360→
+   361→   361→function StatusDot({ status }: { status: string }) {
+   362→   362→  const color = status === "healthy" ? "bg-[#3f7450]" : status === "degraded" ? "bg-[#ae8d4a]" : "bg-[#8b4e49]";
+   363→   363→  return (
+   364→   364→    <span className={`inline-block w-2.5 h-2.5 rounded-full ${color} ${status === "degraded" ? "animate-pulse" : ""}`} />
+   365→   365→  );
+   366→   366→}
+   367→   367→
+   368→   368→function MetricCard({ label, value, unit, icon: Icon, color }: { label: string; value: string | number; unit?: string; icon: React.ElementType; color: string }) {
+   369→   369→  return (
+   370→   370→    <div className="bg-[#f6f6f6] dark:bg-[#1e1e22] rounded-lg p-3 text-center">
+   371→   371→      <Icon className={`h-4 w-4 mx-auto mb-1 ${color}`} />
+   372→   372→      <div className={`text-lg font-bold ${color}`}>{value}{unit && <span className="text-xs font-normal">{unit}</span>}</div>
+   373→   373→      <div className="text-xs text-[#86837c] dark:text-[#a0a0a0]">{label}</div>
+   374→   374→    </div>
+   375→   375→  );
+   376→   376→}
+   377→   377→
+   378→   378→function ProxyDashboard({ proxy }: { proxy: ProxyMonitorState }) {
+   379→   379→  const ramPct = proxy.name === "OWL-AGENT" ? (proxy.ram / 120) * 100 : (proxy.ram / 50) * 100;
+   380→   380→
+   381→   381→  return (
+   382→   382→    <Card className="bg-white dark:bg-[#2a2a2e] border border-[#d6d1c2] dark:border-[#3a3a3e]">
+   383→   383→      <CardHeader className="pb-2">
+   384→   384→        <div className="flex items-center justify-between">
+   385→   385→          <div className="flex items-center gap-2">
+   386→   386→            <StatusDot status={proxy.status} />
+   387→   387→            <CardTitle className="text-base text-[#151513] dark:text-[#e8e6e1]">{proxy.name}</CardTitle>
+   388→   388→            <Badge variant="outline" className="text-xs">:{proxy.port}</Badge>
+   389→   389→          </div>
+   390→   390→          <Badge className={`text-xs ${
+   391→   391→            proxy.status === "healthy" ? "bg-[#3f7450]/10 text-[#3f7450] dark:bg-[#3f7450]/20 dark:text-[#5aad6a]" :
+   392→   392→            proxy.status === "degraded" ? "bg-[#ae8d4a]/10 text-[#ae8d4a]" :
+   393→   393→            "bg-[#8b4e49]/10 text-[#8b4e49]"
+   394→   394→          }`}>
+   395→   395→            {proxy.status.toUpperCase()}
+   396→   396→          </Badge>
+   397→   397→        </div>
+   398→   398→        {proxy.lastError && (
+   399→   399→          <div className="flex items-center gap-1 text-xs text-[#8b4e49] mt-1">
+   400→   400→            <AlertTriangle className="h-3 w-3" /> {proxy.lastError}
+   401→   401→          </div>
+   402→   402→        )}
+   403→   403→      </CardHeader>
+   404→   404→      <CardContent>
+   405→   405→        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+   406→   406→          <MetricCard label="RAM" value={proxy.ram.toFixed(1)} unit=" MB" icon={Cpu} color="text-[#92751f] dark:text-[#ae964d]" />
+   407→   407→          <MetricCard label="Latency" value={proxy.latencyMs} unit=" ms" icon={Clock} color="text-[#537ba4] dark:text-[#7aa3cc]" />
+   408→   408→          <MetricCard label="Req/min" value={proxy.requestsPerMin} icon={Activity} color="text-[#3f7450] dark:text-[#5aad6a]" />
+   409→   409→          <MetricCard label="Connections" value={proxy.activeConnections} icon={Server} color="text-[#6b634d] dark:text-[#ae964d]" />
+   410→   410→        </div>
+   411→   411→        <div className="mt-3">
+   412→   412→          <div className="flex items-center justify-between text-xs mb-1">
+   413→   413→            <span className="text-[#86837c] dark:text-[#a0a0a0]">RAM Usage</span>
+   414→   414→            <span className="font-medium text-[#151513] dark:text-[#e8e6e1]">{proxy.ram.toFixed(1)} / {proxy.name === "OWL-AGENT" ? 120 : 50} MB</span>
+   415→   415→          </div>
+   416→   416→          <Progress value={ramPct} className="h-2" />
+   417→   417→        </div>
+   418→   418→        <div className="mt-2 flex items-center justify-between text-xs">
+   419→   419→          <div className="flex items-center gap-1 text-[#86837c] dark:text-[#a0a0a0]">
+   420→   420→            <Radio className="h-3 w-3" /> Uptime: {proxy.uptime}
+   421→   421→          </div>
+   422→   422→          <div className="flex items-center gap-1">
+   423→   423→            <span className="text-[#86837c] dark:text-[#a0a0a0]">Circuit:</span>
+   424→   424→            <Badge variant="outline" className={`text-xs ${
+   425→   425→              proxy.circuitBreaker === "closed" ? "border-[#3f7450]/30 text-[#3f7450]" :
+   426→   426→              proxy.circuitBreaker === "half-open" ? "border-[#ae8d4a]/30 text-[#ae8d4a]" :
+   427→   427→              "border-[#8b4e49]/30 text-[#8b4e49]"
+   428→   428→            }`}>
+   429→   429→              {proxy.circuitBreaker}
+   430→   430→            </Badge>
+   431→   431→          </div>
+   432→   432→        </div>
+   433→   433→      </CardContent>
+   434→   434→    </Card>
+   435→   435→  );
+   436→   436→}
+   437→   437→
+   438→   438→export function MonitoringSection() {
+   439→   439→  const ref = useRef(null);
+   440→   440→  const isInView = useInView(ref, { once: true, margin: "-50px" });
+   441→   441→  const [connected, setConnected] = useState(false);
+   442→   442→  const [gozenState, setGozenState] = useState<ProxyMonitorState | null>(null);
+   443→   443→  const [owlState, setOwlState] = useState<ProxyMonitorState | null>(null);
+   444→   444→  const [logs, setLogs] = useState<LogEntry[]>([]);
+   445→   445→  const socketRef = useRef<Socket | null>(null);
+   446→   446→
+   447→   447→  useEffect(() => {
+   448→   448→    // Connect to WebSocket monitoring service
+   449→   449→    const socket = io("/?XTransformPort=3030", {
+   450→   450→      transports: ["websocket"],
+   451→   451→      reconnection: true,
+   452→   452→      reconnectionAttempts: 5,
+   453→   453→      reconnectionDelay: 2000,
+   454→   454→    });
+   455→   455→
+   456→   456→    socket.on("connect", () => {
+   457→   457→      setConnected(true);
+   458→   458→      console.log("[monitor] Connected to proxy monitor service");
+   459→   459→    });
+   460→   460→
+   461→   461→    socket.on("disconnect", () => {
+   462→   462→      setConnected(false);
+   463→   463→    });
+   464→   464→
+   465→   465→    socket.on("proxy:state", (data: { gozen: ProxyMonitorState; owl: ProxyMonitorState }) => {
+   466→   466→      setGozenState(data.gozen);
+   467→   467→      setOwlState(data.owl);
+   468→   468→    });
+   469→   469→
+   470→   470→    socket.on("proxy:logs", (entries: LogEntry[]) => {
+   471→   471→      setLogs(entries);
+   472→   472→    });
+   473→   473→
+   474→   474→    socket.on("proxy:log", (entry: LogEntry) => {
+   475→   475→      setLogs((prev) => [entry, ...prev].slice(0, 50));
+   476→   476→    });
+   477→   477→
+   478→   478→    socketRef.current = socket;
+   479→   479→
+   480→   480→    return () => {
+   481→   481→      socket.disconnect();
+   482→   482→    };
+   483→   483→  }, []);
+   484→   484→
+   485→   485→  // Fallback: if WebSocket not connected, show simulated data
+   486→   486→  useEffect(() => {
+   487→   487→    if (!connected && !gozenState) {
+   488→   488→      const interval = setInterval(() => {
+   489→   489→        setGozenState({
+   490→   490→          name: "GoZen", status: "healthy", ram: 38 + Math.random() * 10,
+   491→   491→          requestsPerMin: Math.round(8 + Math.random() * 8),
+   492→   492→          latencyMs: Math.round(120 + Math.random() * 60),
+   493→   493→          uptime: "3d 14h 22m", port: 19841, activeConnections: Math.round(1 + Math.random() * 4),
+   494→   494→          circuitBreaker: "closed", lastError: null,
+   495→   495→        });
+   496→   496→        setOwlState({
+   497→   497→          name: "OWL-AGENT", status: "healthy", ram: 90 + Math.random() * 20,
+   498→   498→          requestsPerMin: Math.round(5 + Math.random() * 6),
+   499→   499→          latencyMs: Math.round(180 + Math.random() * 80),
+   500→   500→          uptime: "3d 14h 20m", port: 60000, activeConnections: Math.round(1 + Math.random() * 3),
+   501→   501→          circuitBreaker: "closed", lastError: null,
+   502→   502→        });
+   503→   503→      }, 2000);
+   504→   504→      return () => clearInterval(interval);
+   505→   505→    }
+   506→   506→  }, [connected, gozenState]);
+   507→   507→
+   508→   508→  return (
+   509→   509→    <section ref={ref} id="monitor" className="py-12 sm:py-20 bg-[#f6f6f6] dark:bg-[#141418]">
+   510→   510→      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   511→   511→        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+   512→   512→          <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+   513→   513→            <h2 className="text-2xl sm:text-3xl font-bold text-[#6b634d] dark:text-[#ae964d]">Live Monitoring</h2>
+   514→   514→            <div className="flex items-center gap-2">
+   515→   515→              {connected ? (
+   516→   516→                <Badge className="bg-[#3f7450]/10 text-[#3f7450] dark:bg-[#3f7450]/20 dark:text-[#5aad6a]">
+   517→   517→                  <Wifi className="h-3 w-3 mr-1" /> Connected
+   518→   518→                </Badge>
+   519→   519→              ) : (
+   520→   520→                <Badge className="bg-[#ae8d4a]/10 text-[#ae8d4a]">
+   521→   521→                  <WifiOff className="h-3 w-3 mr-1" /> Simulated
+   522→   522→                </Badge>
+   523→   523→              )}
+   524→   524→            </div>
+   525→   525→          </div>
+   526→   526→          <p className="text-[#86837c] dark:text-[#a0a0a0] mb-6 text-sm sm:text-base">
+   527→   527→            Real-time proxy health metrics via WebSocket. {connected ? "Live data from monitoring service." : "Showing simulated metrics (connect to monitoring service for live data)."}
+   528→   528→          </p>
+   529→   529→        </motion.div>
+   530→   530→
+   531→   531→        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+   532→   532→          {gozenState && (
+   533→   533→            <motion.div variants={staggerItem}>
+   534→   534→              <ProxyDashboard proxy={gozenState} />
+   535→   535→            </motion.div>
+   536→   536→          )}
+   537→   537→          {owlState && (
+   538→   538→            <motion.div variants={staggerItem}>
+   539→   539→              <ProxyDashboard proxy={owlState} />
+   540→   540→            </motion.div>
+   541→   541→          )}
+   542→   542→        </motion.div>
+   543→   543→
+   544→   544→        {/* Combined RAM */}
+   545→   545→        {gozenState && owlState && (
+   546→   546→          <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+   547→   547→            <Card className="bg-white dark:bg-[#2a2a2e] border border-[#d6d1c2] dark:border-[#3a3a3e] mb-6">
+   548→   548→              <CardContent className="p-4">
+   549→   549→                <div className="flex items-center justify-between mb-2">
+   550→   550→                  <span className="text-sm font-medium text-[#6b634d] dark:text-[#ae964d]">Combined Stack RAM</span>
+   551→   551→                  <span className="text-sm font-bold text-[#92751f] dark:text-[#ae964d]">
+   552→   552→                    {(gozenState.ram + owlState.ram).toFixed(1)} MB / 8192 MB ({((gozenState.ram + owlState.ram) / 81.92).toFixed(1)}%)
+   553→   553→                  </span>
+   554→   554→                </div>
+   555→   555→                <Progress value={((gozenState.ram + owlState.ram) / 8192) * 100} className="h-3" />
+   556→   556→                <div className="flex justify-between mt-1 text-xs text-[#86837c] dark:text-[#a0a0a0]">
+   557→   557→                  <span>GoZen: {gozenState.ram.toFixed(1)} MB</span>
+   558→   558→                  <span>OWL: {owlState.ram.toFixed(1)} MB</span>
+   559→   559→                  <span>Available: {(8192 - gozenState.ram - owlState.ram).toFixed(0)} MB</span>
+   560→   560→                </div>
+   561→   561→              </CardContent>
+   562→   562→            </Card>
+   563→   563→          </motion.div>
+   564→   564→        )}
+   565→   565→
+   566→   566→        {/* Request Log */}
+   567→   567→        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+   568→   568→          <Card className="bg-white dark:bg-[#2a2a2e] border border-[#d6d1c2] dark:border-[#3a3a3e]">
+   569→   569→            <CardHeader className="pb-2">
+   570→   570→              <CardTitle className="text-sm text-[#6b634d] dark:text-[#ae964d] flex items-center gap-2">
+   571→   571→                <Terminal className="h-4 w-4" /> Request Log
+   572→   572→              </CardTitle>
+   573→   573→            </CardHeader>
+   574→   574→            <CardContent>
+   575→   575→              <div className="max-h-64 overflow-y-auto font-mono text-xs space-y-1">
+   576→   576→                {logs.length === 0 && (
+   577→   577→                  <div className="text-[#86837c] dark:text-[#a0a0a0] py-4 text-center">
+   578→   578→                    Waiting for log entries...
+   579→   579→                  </div>
+   580→   580→                )}
+   581→   581→                {logs.map((log, i) => (
+   582→   582→                  <motion.div
+   583→   583→                    key={`${log.timestamp}-${i}`}
+   584→   584→                    initial={{ opacity: 0, x: -10 }}
+   585→   585→                    animate={{ opacity: 1, x: 0 }}
+   586→   586→                    className={`flex items-center gap-2 py-1 px-2 rounded ${
+   587→   587→                      log.status >= 400 ? "bg-[#8b4e49]/5 dark:bg-[#8b4e49]/10" : "hover:bg-[#f6f6f6] dark:hover:bg-[#1e1e22]"
+   588→   588→                    }`}
+   589→   589→                  >
+   590→   590→                    <span className="text-[#86837c] dark:text-[#a0a0a0] w-[70px] flex-shrink-0">
+   591→   591→                      {new Date(log.timestamp).toLocaleTimeString()}
+   592→   592→                    </span>
+   593→   593→                    <Badge variant="outline" className="text-xs w-16 flex-shrink-0 justify-center">
+   594→   594→                      {log.proxy}
+   595→   595→                    </Badge>
+   596→   596→                    <span className={`w-8 text-center font-bold ${log.status >= 400 ? "text-[#8b4e49]" : "text-[#3f7450]"}`}>
+   597→   597→                      {log.status}
+   598→   598→                    </span>
+   599→   599→                    <span className="text-[#86837c] dark:text-[#a0a0a0] flex-1 truncate">{log.path}</span>
+   600→   600→                    <span className="text-[#537ba4] dark:text-[#7aa3cc] w-16 text-right">{log.latency}ms</span>
+   601→   601→                    <span className="text-[#ae964d] dark:text-[#c9b56d] w-20 text-right truncate">{log.model}</span>
+   602→   602→                  </motion.div>
+   603→   603→                ))}
+   604→   604→              </div>
+   605→   605→            </CardContent>
+   606→   606→          </Card>
+   607→   607→        </motion.div>
+   608→   608→      </div>
+   609→   609→    </section>
+   610→   610→  );
+   611→   611→}
+   612→   612→
