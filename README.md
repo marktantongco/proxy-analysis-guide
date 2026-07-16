@@ -689,6 +689,64 @@ The analyzed proxy repositories have their own licenses:
 
 ---
 
+## 🚢 Deployment
+
+### Option 1: Vercel (Recommended)
+
+The easiest way to deploy this Next.js app is with [Vercel](https://vercel.com):
+
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. Import your GitHub repository: `marktantongco/proxy-analysis-guide`
+3. Vercel auto-detects Next.js — just click **Deploy**
+4. Your app will be live at `https://your-project.vercel.app`
+
+> **Note:** The `vercel.json` is already configured in the repo. No additional setup needed.
+
+### Option 2: GitHub Actions + Vercel
+
+A GitHub Actions workflow is included at `.github/workflows/deploy-vercel.yml`. To use it:
+
+1. Create a Vercel account and get an API token from [vercel.com/account/tokens](https://vercel.com/account/tokens)
+2. Add the token as a GitHub secret: `VERCEL_TOKEN` (Settings → Secrets → Actions)
+3. Push to `main` — the workflow will auto-deploy
+
+### Option 3: Self-Hosted (VPS/Cloud)
+
+```bash
+# Build the standalone production bundle
+bun run build
+
+# Start the production server
+bun run start
+
+# Or with Caddy reverse proxy (Caddyfile included):
+caddy run
+```
+
+The standalone build outputs to `.next/standalone/` and can run with just Node.js/Bun — no `node_modules` needed in production.
+
+### Option 4: Docker
+
+```dockerfile
+FROM oven/bun:1 AS builder
+WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+COPY . .
+RUN bun run db:generate
+RUN bun run build
+
+FROM oven/bun:1-slim
+WORKDIR /app
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+CMD ["bun", "server.js"]
+```
+
+---
+
 ## 🏆 Key Findings
 
 | Rank | Proxy | Score | Best For |
