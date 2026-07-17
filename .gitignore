@@ -120,3 +120,6 @@ server.log
 
 # Z scripts
 /.zscripts/
+
+# Agent context (local dev)
+/agent-ctx/

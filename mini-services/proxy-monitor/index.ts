@@ -1,23 +1,12 @@
 import { Server } from "socket.io";
 import { createServer } from "http";
+import { type ProxyMonitorState, type RequestLogEntry } from "./types";
 
 const PORT = 3030;
 
 // Simulated proxy monitoring state
-interface ProxyState {
-  name: string;
-  status: "healthy" | "degraded" | "down";
-  ram: number;
-  requestsPerMin: number;
-  latencyMs: number;
-  uptime: string;
-  port: number;
-  activeConnections: number;
-  circuitBreaker: "closed" | "open" | "half-open";
-  lastError: string | null;
-}
 
-const gozenState: ProxyState = {
+const gozenState: ProxyMonitorState = {
   name: "GoZen",
   status: "healthy",
   ram: 42,
@@ -30,7 +19,7 @@ const gozenState: ProxyState = {
   lastError: null,
 };
 
-const owlState: ProxyState = {
+const owlState: ProxyMonitorState = {
   name: "OWL-AGENT",
   status: "healthy",
   ram: 98,
@@ -48,7 +37,7 @@ function fluctuate(base: number, range: number): number {
   return Math.round((base + (Math.random() - 0.5) * range) * 10) / 10;
 }
 
-function updateState(state: ProxyState, isOwl: boolean): ProxyState {
+function updateState(state: ProxyMonitorState, isOwl: boolean): ProxyMonitorState {
   state.ram = fluctuate(isOwl ? 98 : 42, isOwl ? 15 : 8);
   state.requestsPerMin = Math.max(0, Math.round(fluctuate(isOwl ? 8 : 12, 6)));
   state.latencyMs = Math.max(50, Math.round(fluctuate(isOwl ? 210 : 145, 80)));
@@ -75,15 +64,6 @@ function updateState(state: ProxyState, isOwl: boolean): ProxyState {
 }
 
 // Request log entries
-interface RequestLogEntry {
-  timestamp: string;
-  proxy: string;
-  method: string;
-  path: string;
-  status: number;
-  latency: number;
-  model: string;
-}
 
 const requestModels = ["claude-sonnet-4-20250514", "claude-opus-4-20250514", "gpt-4o", "gpt-4o-mini"];
 const requestPaths = ["/v1/messages", "/v1/chat/completions", "/v1/responses"];

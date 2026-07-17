@@ -2,6 +2,49 @@ import { NextRequest, NextResponse } from "next/server";
 
 const API_KEY = "21st_sk_11169f975e70543173ac97bf9f4f5804aa787a7df69b5bf96f439769d507aa55";
 
+// ── Type-safe API response interfaces ──────────────────────────────────
+interface ComponentData {
+  id: number;
+  name: string;
+  component_slug: string;
+  library_id: string;
+  description: string;
+  install_command: string;
+}
+
+interface ComponentUserData {
+  name: string;
+  username: string;
+  image_url: string | null;
+}
+
+interface SearchResult {
+  name: string;
+  preview_url: string | null;
+  demo_id: number;
+  component_data: ComponentData;
+  component_user_data: ComponentUserData;
+  usage_count: number;
+}
+
+interface Pagination {
+  total: number;
+  page: number;
+  per_page: number;
+  total_pages: number;
+}
+
+interface SearchMetadata {
+  plan: string;
+  requests_remaining: number;
+  pagination: Pagination;
+}
+
+interface SearchResponse {
+  results: SearchResult[];
+  metadata: SearchMetadata;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -10,7 +53,14 @@ export async function POST(request: NextRequest) {
     const perPage = body.per_page || 12;
 
     if (!search.trim()) {
-      return NextResponse.json({ results: [], metadata: { plan: "free", requests_remaining: 999999, pagination: { total: 0, page: 1, per_page: perPage, total_pages: 0 } } });
+      return NextResponse.json<SearchResponse>({
+        results: [],
+        metadata: {
+          plan: "free",
+          requests_remaining: 999999,
+          pagination: { total: 0, page: 1, per_page: perPage, total_pages: 0 },
+        },
+      });
     }
 
     const response = await fetch("https://21st.dev/api/search", {
@@ -24,7 +74,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (response.ok) {
-      const data = await response.json();
+      const data = await response.json() as SearchResponse;
       return NextResponse.json(data);
     }
 
@@ -35,8 +85,8 @@ export async function POST(request: NextRequest) {
 }
 
 // Fallback curated results when API is unreachable
-function getFallbackResults(query: string) {
-  const allResults = [
+function getFallbackResults(query: string): SearchResponse {
+  const allResults: SearchResult[] = [
     { name: "Animated Button", preview_url: null, demo_id: 1, component_data: { id: 1, name: "Button", component_slug: "button", library_id: "shadcn", description: "Displays a button or a component that looks like a button.", install_command: 'npx shadcn@latest add "button"' }, component_user_data: { name: "shadcn", username: "shadcn", image_url: null }, usage_count: 42558 },
     { name: "Animated Card", preview_url: null, demo_id: 2, component_data: { id: 2, name: "Card", component_slug: "card", library_id: "shadcn", description: "Displays a card with header, content, and footer.", install_command: 'npx shadcn@latest add "card"' }, component_user_data: { name: "shadcn", username: "shadcn", image_url: null }, usage_count: 38421 },
     { name: "Dialog Modal", preview_url: null, demo_id: 3, component_data: { id: 3, name: "Dialog", component_slug: "dialog", library_id: "shadcn", description: "A window overlaid on the primary window, rendering secondary content.", install_command: 'npx shadcn@latest add "dialog"' }, component_user_data: { name: "shadcn", username: "shadcn", image_url: null }, usage_count: 31207 },

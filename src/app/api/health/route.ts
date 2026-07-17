@@ -14,7 +14,36 @@ const HEALTH_ENDPOINTS = {
     name: "OWL-AGENT",
     maxRam: 120,
   },
-};
+} as const;
+
+// ── Type-safe health check result ──────────────────────────────────────
+type HealthStatus = "healthy" | "degraded" | "down";
+
+interface HealthCheckResult {
+  status: HealthStatus;
+  source: "http";
+  proxy: string;
+  port: number;
+  timestamp: string;
+  data?: unknown;
+  httpStatus?: number;
+  error?: string;
+}
+
+function buildResult(
+  status: HealthStatus,
+  endpoint: { name: string; port: number },
+  extra?: Partial<Pick<HealthCheckResult, "data" | "httpStatus" | "error">>,
+): HealthCheckResult {
+  return {
+    status,
+    source: "http",
+    proxy: endpoint.name,
+    port: endpoint.port,
+    timestamp: new Date().toISOString(),
+    ...extra,
+  };
+}
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -34,37 +63,22 @@ export async function GET(request: NextRequest) {
 
       if (res.ok) {
         const data = await res.json();
-        return NextResponse.json({
-          status: "healthy",
-          source: "http",
-          proxy: endpoint.name,
-          port: endpoint.port,
-          data,
-          timestamp: new Date().toISOString(),
-        });
+        return NextResponse.json(
+          buildResult("healthy", endpoint, { data }),
+        );
       }
-      return NextResponse.json({
-        status: "degraded",
-        source: "http",
-        proxy: endpoint.name,
-        port: endpoint.port,
-        httpStatus: res.status,
-        timestamp: new Date().toISOString(),
-      });
+      return NextResponse.json(
+        buildResult("degraded", endpoint, { httpStatus: res.status }),
+      );
     } catch {
-      return NextResponse.json({
-        status: "down",
-        source: "http",
-        proxy: endpoint.name,
-        port: endpoint.port,
-        error: "Connection refused or timeout",
-        timestamp: new Date().toISOString(),
-      });
+      return NextResponse.json(
+        buildResult("down", endpoint, { error: "Connection refused or timeout" }),
+      );
     }
   }
 
   // "all" — check both endpoints in parallel
-  const results: Record<string, unknown> = {};
+  const results: Record<string, HealthCheckResult> = {};
   const checks = Object.entries(HEALTH_ENDPOINTS).map(async ([key, endpoint]) => {
     try {
       const controller = new AbortController();
@@ -77,33 +91,12 @@ export async function GET(request: NextRequest) {
 
       if (res.ok) {
         const data = await res.json();
-        results[key] = {
-          status: "healthy",
-          source: "http",
-          proxy: endpoint.name,
-          port: endpoint.port,
-          data,
-          timestamp: new Date().toISOString(),
-        };
+        results[key] = buildResult("healthy", endpoint, { data });
       } else {
-        results[key] = {
-          status: "degraded",
-          source: "http",
-          proxy: endpoint.name,
-          port: endpoint.port,
-          httpStatus: res.status,
-          timestamp: new Date().toISOString(),
-        };
+        results[key] = buildResult("degraded", endpoint, { httpStatus: res.status });
       }
     } catch {
-      results[key] = {
-        status: "down",
-        source: "http",
-        proxy: endpoint.name,
-        port: endpoint.port,
-        error: "Connection refused or timeout",
-        timestamp: new Date().toISOString(),
-      };
+      results[key] = buildResult("down", endpoint, { error: "Connection refused or timeout" });
     }
   });
 
