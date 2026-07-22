@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
   Shield, Zap, Server, CheckCircle2, XCircle, ChevronDown,
   Copy, Check, ArrowDown, Cpu, HardDrive, BarChart3, Globe,
   Terminal, BookOpen, Layers, Star, AlertTriangle, Radio,
-  Menu, X, ExternalLink, ChevronRight
+  Menu, X, ExternalLink, ChevronRight, Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,15 +14,17 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import {
   rankedProxies, deepDives, comparisonFeatures, synergyCombos,
   gozenInstallSteps, owlInstallSteps, verificationChecklist as initialChecklist,
   decisionTree, ramImpact, unifiedStackConfig, startupSequence, scoringWeights,
   type ProxyRepo, type ProxyDeepDive, type ChecklistItem, type InstallStep
 } from "@/lib/proxy-data";
-import { DarkModeToggle, ComponentSearchSection, ConfigExportSection, MonitoringSection, ComponentInstallSection, InstallationRunner } from "@/components/new-sections";
+import { DarkModeToggle, ComponentSearchSection, ConfigExportSection, MonitoringSection, ComponentInstallSection, InstallationRunner, LiveMetricsSection } from "@/components/new-sections";
 import { fadeUp, staggerContainer, staggerItem, scaleIn } from "@/lib/animations";
 import { tw } from "@/lib/theme-tokens";
+import { useProxyStore } from "@/lib/store";
 
 /* ──────────────── COPY BUTTON HOOK ──────────────────────────────────────── */
 
@@ -45,7 +47,7 @@ function HeroSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-background">
+    <section id="hero" ref={ref} className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-background">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
@@ -69,14 +71,14 @@ function HeroSection() {
           variants={staggerItem}
           className="text-3xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight tracking-tight"
         >
-          Comprehensive Proxy
+          Find YOUR Best
           <br />
-          <span className="text-accent">Analysis & Guide</span>
+          <span className="text-accent">AI Proxy</span>
         </motion.h1>
 
         <motion.p variants={staggerItem} className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          10 open-source AI proxies ranked, deep-dived, and compared.
-          Interactive installation guide for your 8 GB RAM Ubuntu system.
+          10 open-source AI proxies analyzed with live metrics.
+          Discover which proxy fits YOUR setup — not a one-size-fits-all ranking.
         </motion.p>
 
         {/* Key Stats */}
@@ -173,6 +175,22 @@ function RankedSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
   const [expanded, setExpanded] = useState<number | null>(null);
+  const selectedProxy = useProxyStore((s) => s.selectedProxy);
+  const setSelectedProxy = useProxyStore((s) => s.setSelectedProxy);
+  const searchFilter = useProxyStore((s) => s.searchFilter);
+  const setSearchFilter = useProxyStore((s) => s.setSearchFilter);
+
+  const filteredProxies = rankedProxies.filter((proxy) => {
+    if (!searchFilter.trim()) return true;
+    const q = searchFilter.toLowerCase();
+    return (
+      proxy.name.toLowerCase().includes(q) ||
+      proxy.description.toLowerCase().includes(q) ||
+      proxy.language.toLowerCase().includes(q) ||
+      proxy.estRam.toLowerCase().includes(q) ||
+      proxy.uniqueValue.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <section id="ranked" ref={ref} className="py-12 sm:py-20 bg-background">
@@ -182,12 +200,28 @@ function RankedSection() {
           <p className="text-muted-foreground mb-8 text-sm sm:text-base">Click any proxy to see details. Weighted scoring: Memory 40%, Features 25%, Maintenance 15%, Setup 10%, Unique Value 10%</p>
         </motion.div>
 
+        {/* Search Filter */}
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mb-4">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Filter proxies by name, language, RAM..."
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              className="pl-10 bg-card border-border"
+            />
+          </div>
+        </motion.div>
+
         <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-3">
-          {rankedProxies.map((proxy) => (
+          {filteredProxies.map((proxy) => (
             <motion.div key={proxy.name} variants={staggerItem}>
               <Card
-                className={`${tw.bgCard} border ${tw.borderBorder} cursor-pointer transition-shadow hover:shadow-md`}
-                onClick={() => setExpanded(expanded === proxy.rank ? null : proxy.rank)}
+                className={`${tw.bgCard} border ${tw.borderBorder} cursor-pointer transition-shadow hover:shadow-md ${selectedProxy === proxy.name ? "ring-2 ring-accent/40" : ""}`}
+                onClick={() => {
+                  setExpanded(expanded === proxy.rank ? null : proxy.rank);
+                  setSelectedProxy(expanded === proxy.rank ? null : proxy.name);
+                }}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between gap-2">
@@ -258,7 +292,7 @@ function RankedSection() {
    SECTION: Deep Dives
    ════════════════════════════════════════════════════════════════════════════ */
 
-function DeepDiveCard({ dive }: { dive: ProxyDeepDive }) {
+function DeepDiveCard({ dive, isSelected }: { dive: ProxyDeepDive; isSelected: boolean }) {
   const [activeTab, setActiveTab] = useState("features");
   const { copied, copy } = useCopy();
   const ref = useRef(null);
@@ -266,7 +300,7 @@ function DeepDiveCard({ dive }: { dive: ProxyDeepDive }) {
 
   return (
     <motion.div ref={ref} variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
-      <Card className={`${tw.bgCard} border ${tw.borderBorder} overflow-hidden`}>
+      <Card className={`${tw.bgCard} border ${isSelected ? "ring-2 ring-accent/40 border-accent/30" : tw.borderBorder} overflow-hidden`}>
         <CardHeader className="pb-3 bg-gradient-to-r from-background to-card">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
@@ -386,6 +420,7 @@ function DeepDiveCard({ dive }: { dive: ProxyDeepDive }) {
 function DeepDivesSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const selectedProxy = useProxyStore((s) => s.selectedProxy);
 
   return (
     <section ref={ref} className="py-12 sm:py-20 bg-card">
@@ -396,7 +431,7 @@ function DeepDivesSection() {
         </motion.div>
         <div className="space-y-6">
           {deepDives.map((dive) => (
-            <DeepDiveCard key={dive.name} dive={dive} />
+            <DeepDiveCard key={dive.name} dive={dive} isSelected={selectedProxy === dive.name} />
           ))}
         </div>
       </div>
@@ -759,13 +794,12 @@ function DecisionTreeSection() {
 function ChecklistSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const [items, setItems] = useState<ChecklistItem[]>(initialChecklist);
+  const completedChecks = useProxyStore((s) => s.completedChecks);
+  const toggleCheck = useProxyStore((s) => s.toggleCheck);
+  const resetChecks = useProxyStore((s) => s.resetChecks);
 
-  const toggleItem = (idx: number) => {
-    setItems((prev) => prev.map((item, i) => i === idx ? { ...item, done: !item.done } : item));
-  };
-
-  const doneCount = items.filter((i) => i.done).length;
+  const items = initialChecklist;
+  const doneCount = items.filter((item) => completedChecks.includes(item.check)).length;
   const progress = (doneCount / items.length) * 100;
 
   return (
@@ -779,25 +813,34 @@ function ChecklistSection() {
         <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-primary">{doneCount}/{items.length} completed</span>
-            <span className="text-sm font-bold text-accent">{Math.round(progress)}%</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-accent">{Math.round(progress)}%</span>
+              {doneCount > 0 && (
+                <Button variant="ghost" size="sm" onClick={resetChecks} className="text-xs text-muted-foreground hover:text-foreground h-6 px-2">
+                  Reset
+                </Button>
+              )}
+            </div>
           </div>
           <Progress value={progress} className="h-3" />
         </motion.div>
 
         <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-2">
-          {items.map((item, i) => (
+          {items.map((item, i) => {
+            const isDone = completedChecks.includes(item.check);
+            return (
             <motion.div key={i} variants={staggerItem}>
-              <Card className={`${tw.bgCard} border ${item.done ? "border-cascade-success/40 bg-cascade-success/5" : tw.borderBorder}`}>
+              <Card className={`${tw.bgCard} border ${isDone ? "border-cascade-success/40 bg-cascade-success/5" : tw.borderBorder}`}>
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-start gap-3">
                     <button
-                      onClick={() => toggleItem(i)}
-                      className={`flex-shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${item.done ? "bg-cascade-success border-cascade-success" : "border-border hover:border-accent"}`}
+                      onClick={() => toggleCheck(item.check)}
+                      className={`flex-shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${isDone ? "bg-cascade-success border-cascade-success" : "border-border hover:border-accent"}`}
                     >
-                      {item.done && <Check className="h-3.5 w-3.5 text-white" />}
+                      {isDone && <Check className="h-3.5 w-3.5 text-white" />}
                     </button>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-medium ${item.done ? "text-cascade-success line-through" : "text-foreground"}`}>
+                      <p className={`text-sm font-medium ${isDone ? "text-cascade-success line-through" : "text-foreground"}`}>
                         {item.check}
                       </p>
                       <code className="text-xs bg-[#1a1a2e] text-[#e0e0e0] px-1.5 py-0.5 rounded mt-1 inline-block max-w-full overflow-x-auto">{item.command}</code>
@@ -807,7 +850,8 @@ function ChecklistSection() {
                 </CardContent>
               </Card>
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </div>
     </section>
@@ -842,6 +886,32 @@ function Footer() {
 
 export default function ProxyAnalysisPage() {
   const [mobileNav, setMobileNav] = useState(false);
+  const setActiveSection = useProxyStore((s) => s.setActiveSection);
+
+  // Track active section via IntersectionObserver
+  useEffect(() => {
+    const sectionIds = ["hero", "ranked", "components", "install", "install-runner", "component-install", "monitor"];
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(id);
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [setActiveSection]);
 
   const navItems = [
     { id: "ranked", label: "Rankings" },
@@ -916,6 +986,7 @@ export default function ProxyAnalysisPage() {
         <RankedSection />
         <DeepDivesSection />
         <ComparisonSection />
+        <LiveMetricsSection />
         <SynergySection />
         <ComponentSearchSection />
         <InstallSection />

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_KEY = "21st_sk_11169f975e70543173ac97bf9f4f5804aa787a7df69b5bf96f439769d507aa55";
+const API_KEY = process.env.NEXT_PUBLIC_21ST_API_KEY || "";
 
 // ── Type-safe API response interfaces ──────────────────────────────────
 interface ComponentData {

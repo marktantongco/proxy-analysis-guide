@@ -10,7 +10,7 @@ import {
   Layers, Server, Terminal, Play, RotateCcw, Pause,
   Settings, Palette, Zap, ChevronDown, ChevronUp, ChevronRight,
   Monitor, ArrowRight, ExternalLink, Sparkles, Eye, Loader2,
-  AlertCircle, Hash, Timer
+  AlertCircle, Hash, Timer, Star, GitFork, Archive
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +25,8 @@ import {
 import { fadeUp, staggerContainer, staggerItem, scaleIn } from "@/lib/animations";
 import { palette, tw } from "@/lib/theme-tokens";
 import { type ProxyMonitorState, type RequestLogEntry } from "@/lib/proxy-monitor-types";
+import { useProxyStore } from "@/lib/store";
+import { type RepoMetrics, type MetricsResponse } from "@/lib/live-metrics";
 
 /* ════════════════════════════════════════════════════════════════════════════
    SHARED: Loading Skeleton Component
@@ -99,15 +101,28 @@ const THEME_PRESETS = [
 
 export function DarkModeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const themePreference = useProxyStore((s) => s.themePreference);
+  const setThemePreference = useProxyStore((s) => s.setThemePreference);
   const [showPanel, setShowPanel] = useState(false);
   const isDark = resolvedTheme === "dark";
+
+  const handleThemeToggle = useCallback(() => {
+    const next = isDark ? "light" : "dark";
+    setTheme(next);
+    setThemePreference(next);
+  }, [isDark, setTheme, setThemePreference]);
+
+  const handleThemeSet = useCallback((pref: "light" | "dark" | "system") => {
+    setTheme(pref);
+    setThemePreference(pref);
+  }, [setTheme, setThemePreference]);
 
   return (
     <div className="relative">
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => setTheme(isDark ? "light" : "dark")}
+        onClick={handleThemeToggle}
         className={`relative w-9 h-9 rounded-full border ${tw.borderBorder} ${tw.darkBorderBorder} ${tw.hoverBgBg} ${tw.darkBgHover}`}
       >
         <AnimatePresence mode="wait">
@@ -170,11 +185,14 @@ export function DarkModeToggle() {
             <div className={`mt-3 pt-3 border-t ${tw.borderBorder} ${tw.darkBorderBorder}`}>
               <div className="text-xs text-muted-foreground mb-2">Quick Actions</div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" className={`flex-1 text-xs ${tw.borderBorder} ${tw.darkBorderBorder}`} onClick={() => setTheme("light")}>
+                <Button variant="outline" size="sm" className={`flex-1 text-xs ${tw.borderBorder} ${tw.darkBorderBorder} ${themePreference === "light" ? "ring-1 ring-accent/40" : ""}`} onClick={() => handleThemeSet("light")}>
                   <Sun className="h-3 w-3 mr-1" /> Light
                 </Button>
-                <Button variant="outline" size="sm" className={`flex-1 text-xs ${tw.borderBorder} ${tw.darkBorderBorder}`} onClick={() => setTheme("dark")}>
+                <Button variant="outline" size="sm" className={`flex-1 text-xs ${tw.borderBorder} ${tw.darkBorderBorder} ${themePreference === "dark" ? "ring-1 ring-accent/40" : ""}`} onClick={() => handleThemeSet("dark")}>
                   <Moon className="h-3 w-3 mr-1" /> Dark
+                </Button>
+                <Button variant="outline" size="sm" className={`flex-1 text-xs ${tw.borderBorder} ${tw.darkBorderBorder} ${themePreference === "system" ? "ring-1 ring-accent/40" : ""}`} onClick={() => handleThemeSet("system")}>
+                  <Monitor className="h-3 w-3 mr-1" /> System
                 </Button>
               </div>
             </div>
@@ -932,7 +950,8 @@ function ProxyDashboard({ proxy }: { proxy: ProxyMonitorState }) {
 export function MonitoringSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const [connected, setConnected] = useState(false);
+  const monitoringConnected = useProxyStore((s) => s.monitoringConnected);
+  const setMonitoringConnected = useProxyStore((s) => s.setMonitoringConnected);
   const [dataSource, setDataSource] = useState<"websocket" | "http" | "simulated">("simulated");
   const [gozenState, setGozenState] = useState<ProxyMonitorState | null>(null);
   const [owlState, setOwlState] = useState<ProxyMonitorState | null>(null);
@@ -958,13 +977,13 @@ export function MonitoringSection() {
     });
 
     socket.on("connect", () => {
-      setConnected(true);
+      setMonitoringConnected(true);
       setDataSource("websocket");
       setLastUpdate(new Date());
     });
 
     socket.on("disconnect", () => {
-      setConnected(false);
+      setMonitoringConnected(false);
     });
 
     socket.on("proxy:state", (data: { gozen: ProxyMonitorState; owl: ProxyMonitorState }) => {
@@ -1025,7 +1044,7 @@ export function MonitoringSection() {
 
           if ((data.gozen && data.gozen.status !== "down") || (data.owl && data.owl.status !== "down")) {
             setDataSource("http");
-            setConnected(true);
+            setMonitoringConnected(true);
             setLastUpdate(new Date());
           }
         } catch {
@@ -1048,7 +1067,7 @@ export function MonitoringSection() {
 
   // Fallback: simulated data if no real connection
   useEffect(() => {
-    if (!connected && !gozenState) {
+    if (!monitoringConnected && !gozenState) {
       const interval = setInterval(() => {
         setDataSource("simulated");
         setGozenState({
@@ -1069,7 +1088,7 @@ export function MonitoringSection() {
       }, 2000);
       return () => clearInterval(interval);
     }
-  }, [connected, gozenState]);
+  }, [monitoringConnected, gozenState]);
 
   return (
     <section ref={ref} id="monitor" className={`py-12 sm:py-20 ${tw.bgBg} ${tw.darkBgBgDark}`}>
@@ -1080,12 +1099,12 @@ export function MonitoringSection() {
             <div className="flex items-center gap-2">
               {/* Connection status indicator */}
               <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                connected
+                monitoringConnected
                   ? "bg-cascade-success/10 text-cascade-success border border-cascade-success/20"
                   : "bg-cascade-error/10 text-cascade-error border border-cascade-error/20"
               }`}>
-                {connected ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
-                {connected ? "Connected" : "Disconnected"}
+                {monitoringConnected ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+                {monitoringConnected ? "Connected" : "Disconnected"}
               </div>
               <Badge className={`text-xs ${
                 dataSource === "websocket" ? "bg-cascade-success/10 text-cascade-success dark:bg-cascade-success/20" :
@@ -1512,8 +1531,12 @@ function getEstimatedTime(command: string): string {
 export function InstallationRunner() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const installRunning = useProxyStore((s) => s.installRunning);
+  const setInstallRunning = useProxyStore((s) => s.setInstallRunning);
+  const completedSteps = useProxyStore((s) => s.completedSteps);
+  const toggleStep = useProxyStore((s) => s.toggleStep);
+  const resetSteps = useProxyStore((s) => s.resetSteps);
   const [mode, setMode] = useState<"gozen" | "owl">("gozen");
-  const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [steps, setSteps] = useState<InstallStepState["step"][]>([]);
   const [currentStepIdx, setCurrentStepIdx] = useState(-1);
@@ -1528,9 +1551,9 @@ export function InstallationRunner() {
   useEffect(() => {
     setSteps(allSteps.map((s) => ({ ...s, status: "pending" as StepStatus, output: [] })));
     setCurrentStepIdx(-1);
-    setIsRunning(false);
+    setInstallRunning(false);
     setIsPaused(false);
-  }, [mode, allSteps]);
+  }, [mode, allSteps, setInstallRunning]);
 
   // Auto-scroll terminal
   useEffect(() => {
@@ -1541,7 +1564,7 @@ export function InstallationRunner() {
 
   const runStep = useCallback(async (idx: number) => {
     if (idx >= steps.length) {
-      setIsRunning(false);
+      setInstallRunning(false);
       return;
     }
 
@@ -1561,11 +1584,19 @@ export function InstallationRunner() {
       i === idx ? { ...s, status: (success ? "success" : "failed") as StepStatus, finishedAt: Date.now() } : s
     ));
 
+    if (success) {
+      // Track completed step in global store
+      const stepNum = steps[idx]?.step;
+      if (stepNum && !completedSteps.includes(stepNum)) {
+        toggleStep(stepNum);
+      }
+    }
+
     if (success && idx < steps.length - 1) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       runStep(idx + 1);
     } else {
-      setIsRunning(false);
+      setInstallRunning(false);
       if (!success) {
         setToastMessage(`Step ${steps[idx]?.step} failed! Check output for details.`);
         setToastVisible(true);
@@ -1576,26 +1607,27 @@ export function InstallationRunner() {
         setTimeout(() => setToastVisible(false), 3000);
       }
     }
-  }, [steps]);
+  }, [steps, completedSteps, toggleStep, setInstallRunning]);
 
   const handleStart = useCallback(() => {
-    setIsRunning(true);
+    setInstallRunning(true);
     setIsPaused(false);
     setSteps(allSteps.map((s) => ({ ...s, status: "pending" as StepStatus, output: [] })));
     setTimeout(() => runStep(0), 300);
-  }, [allSteps, runStep]);
+  }, [allSteps, runStep, setInstallRunning]);
 
   const handlePause = useCallback(() => {
     setIsPaused(!isPaused);
   }, [isPaused]);
 
   const handleReset = useCallback(() => {
-    setIsRunning(false);
+    setInstallRunning(false);
     setIsPaused(false);
     setCurrentStepIdx(-1);
     setSteps(allSteps.map((s) => ({ ...s, status: "pending" as StepStatus, output: [] })));
     setShowOutput(null);
-  }, [allSteps]);
+    resetSteps();
+  }, [allSteps, setInstallRunning, resetSteps]);
 
   const completedCount = steps.filter((s) => s.status === "success").length;
   const failedCount = steps.filter((s) => s.status === "failed").length;
@@ -1659,6 +1691,11 @@ export function InstallationRunner() {
                   <span className={`text-sm font-medium ${tw.textHeader} ${tw.darkTextHeader}`}>
                     {completedCount}/{steps.length} steps completed
                     {failedCount > 0 && <span className={`${tw.textError} ml-2`}>({failedCount} failed)</span>}
+                    {completedSteps.length > 0 && !installRunning && (
+                      <span className={`text-xs ${tw.textMuted} ${tw.darkTextMuted} ml-2`}>
+                        ({completedSteps.length} total across runs)
+                      </span>
+                    )}
                   </span>
                   <span className={`text-sm font-bold ${tw.textAccent} ${tw.darkTextAccent}`}>{Math.round(progressPct)}%</span>
                 </div>
@@ -1670,7 +1707,7 @@ export function InstallationRunner() {
             <div className="flex gap-3 mb-6">
               <Button
                 onClick={handleStart}
-                disabled={isRunning}
+                disabled={installRunning}
                 className={`${tw.bgSuccess} ${tw.hoverSuccessDark} text-white h-11 px-6 text-sm font-semibold shadow-lg shadow-cascade-success/20`}
               >
                 <Play className="h-5 w-5 mr-2" /> Run Installation
@@ -1678,7 +1715,7 @@ export function InstallationRunner() {
               <Button
                 variant="outline"
                 onClick={handlePause}
-                disabled={!isRunning}
+                disabled={!installRunning}
                 className={`${tw.borderBorder} ${tw.darkBorderBorder}`}
               >
                 {isPaused ? <Play className="h-4 w-4 mr-2" /> : <Pause className="h-4 w-4 mr-2" />}
@@ -1764,7 +1801,7 @@ export function InstallationRunner() {
                       <div className="w-3 h-3 rounded-full bg-[#28c840]" />
                     </div>
                     <span className="text-xs text-white/40 ml-2">terminal — {mode}</span>
-                    {isRunning && <RefreshCw className="h-3 w-3 text-cascade-info animate-spin ml-auto" />}
+                    {installRunning && <RefreshCw className="h-3 w-3 text-cascade-info animate-spin ml-auto" />}
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -1788,7 +1825,7 @@ export function InstallationRunner() {
                         )}
                       </div>
                     ))}
-                    {!isRunning && steps.every((s) => s.status === "pending") && (
+                    {!installRunning && steps.every((s) => s.status === "pending") && (
                       <div className="text-white/40 py-8 text-center">
                         <Terminal className="h-8 w-8 mx-auto mb-2 opacity-30" />
                         <p>Click &quot;Run Installation&quot; to begin</p>
@@ -1815,5 +1852,244 @@ export function InstallationRunner() {
       </section>
       <ToastNotification message={toastMessage} visible={toastVisible} type={toastVisible && failedCount > 0 ? "error" : "success"} />
     </>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION: Live Proxy Repo Metrics
+   ════════════════════════════════════════════════════════════════════════════ */
+
+type SortKey = "healthScore" | "stars" | "lastCommitDaysAgo" | "name";
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: "healthScore", label: "Health Score" },
+  { key: "stars", label: "Stars" },
+  { key: "lastCommitDaysAgo", label: "Last Commit" },
+  { key: "name", label: "Name" },
+];
+
+function healthColor(score: number): string {
+  if (score >= 80) return "text-cascade-success";
+  if (score >= 60) return "text-cascade-info";
+  if (score >= 40) return "text-cascade-warning";
+  return "text-cascade-error";
+}
+
+function healthBg(score: number): string {
+  if (score >= 80) return "bg-cascade-success/10 border-cascade-success/30";
+  if (score >= 60) return "bg-cascade-info/10 border-cascade-info/30";
+  if (score >= 40) return "bg-cascade-warning/10 border-cascade-warning/30";
+  return "bg-cascade-error/10 border-cascade-error/30";
+}
+
+function sourceBadgeColor(source: string): string {
+  if (source === "live") return "bg-cascade-success/15 text-cascade-success border-cascade-success/30";
+  if (source === "cached") return "bg-cascade-info/15 text-cascade-info border-cascade-info/30";
+  return "bg-cascade-warning/15 text-cascade-warning border-cascade-warning/30";
+}
+
+function formatDaysAgo(days: number): string {
+  if (days === 0) return "Today";
+  if (days === 1) return "1 day ago";
+  if (days < 7) return `${days} days ago`;
+  if (days < 30) return `${Math.floor(days / 7)}w ago`;
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+  return `${Math.floor(days / 365)}y ago`;
+}
+
+function RepoMetricCard({ repo, index }: { repo: RepoMetrics; index: number }) {
+  return (
+    <motion.div variants={staggerItem}>
+      <Card className={`h-full border ${repo.isArchived ? "border-cascade-error/40 bg-cascade-error/5" : tw.borderBorder} ${tw.bgCard} transition-shadow hover:shadow-md`}>
+        <CardHeader className="pb-2 pt-4 px-4">
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-sm font-bold text-foreground truncate">{repo.name}</CardTitle>
+            {repo.isArchived && (
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-cascade-error/10 text-cascade-error border-cascade-error/30 shrink-0">
+                <Archive className="h-3 w-3 mr-0.5" />
+                Archived
+              </Badge>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className="px-4 pb-4 pt-0 space-y-2.5">
+          {/* Health Score */}
+          <div className={`flex items-center justify-between rounded-md border px-2.5 py-1.5 ${healthBg(repo.healthScore)}`}>
+            <div className="flex items-center gap-1.5">
+              <Activity className={`h-3.5 w-3.5 ${healthColor(repo.healthScore)}`} />
+              <span className="text-xs font-medium text-muted-foreground">Health</span>
+            </div>
+            <span className={`text-sm font-bold ${healthColor(repo.healthScore)}`}>{repo.healthScore}</span>
+          </div>
+
+          {/* Stars & Forks */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center gap-1.5 text-xs">
+              <Star className="h-3.5 w-3.5 text-cascade-warning" />
+              <span className="text-foreground font-medium">{repo.stars.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs">
+              <GitFork className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-foreground font-medium">{repo.forks}</span>
+            </div>
+          </div>
+
+          {/* Last Commit */}
+          <div className="flex items-center gap-1.5 text-xs">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-foreground">{formatDaysAgo(repo.lastCommitDaysAgo)}</span>
+          </div>
+
+          {/* Language & License */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-secondary/50 text-muted-foreground border-border">
+              {repo.language}
+            </Badge>
+            <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-secondary/50 text-muted-foreground border-border">
+              {repo.license}
+            </Badge>
+          </div>
+
+          {/* Issues & Contributors */}
+          <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+            <span>{repo.openIssues} issues</span>
+            <span>{repo.contributors} contributors</span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+export function LiveMetricsSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortKey>("healthScore");
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchMetrics = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    try {
+      const res = await fetch("/api/proxy-metrics");
+      if (res.ok) {
+        const data: MetricsResponse = await res.json();
+        setMetrics(data);
+      }
+    } catch {
+      // Silently fail — UI shows loading skeleton
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
+
+  const sortedRepos = metrics
+    ? [...metrics.repos].sort((a, b) => {
+        if (sortBy === "name") return a.name.localeCompare(b.name);
+        if (sortBy === "lastCommitDaysAgo") return a.lastCommitDaysAgo - b.lastCommitDaysAgo;
+        // For numeric fields (healthScore, stars), sort descending
+        const aVal = a[sortBy] as number;
+        const bVal = b[sortBy] as number;
+        return bVal - aVal;
+      })
+    : [];
+
+  return (
+    <section id="live-metrics" ref={ref} className="py-12 sm:py-20 bg-card">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-2">Live Proxy Repo Metrics</h2>
+          <p className="text-muted-foreground mb-6 text-sm sm:text-base">Real-time GitHub data for all 10 proxy repositories</p>
+        </motion.div>
+
+        {/* Controls Row */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6"
+        >
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Source indicator */}
+            {metrics && (
+              <Badge variant="outline" className={`text-xs px-2.5 py-1 ${sourceBadgeColor(metrics.source)}`}>
+                {metrics.source === "live" && "● Live"}
+                {metrics.source === "cached" && "● Cached"}
+                {metrics.source === "fallback" && "● Fallback"}
+              </Badge>
+            )}
+            {metrics && (
+              <span className="text-xs text-muted-foreground">
+                Updated {new Date(metrics.fetchedAt).toLocaleTimeString()}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Sort toggle */}
+            <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-0.5 border border-border">
+              {SORT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => setSortBy(opt.key)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                    sortBy === opt.key
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            {/* Refresh button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchMetrics(true)}
+              disabled={refreshing}
+              className="h-8 gap-1.5 text-xs"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Card Grid */}
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Card key={i} className={`${tw.bgCard} border ${tw.borderBorder}`}>
+                <CardContent className="p-4 space-y-3">
+                  <div className="animate-pulse bg-muted/40 rounded h-4 w-2/3" />
+                  <div className="animate-pulse bg-muted/40 rounded h-8 w-full" />
+                  <div className="animate-pulse bg-muted/40 rounded h-3 w-1/2" />
+                  <div className="animate-pulse bg-muted/40 rounded h-3 w-3/4" />
+                  <div className="animate-pulse bg-muted/40 rounded h-3 w-1/3" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4"
+          >
+            {sortedRepos.map((repo, i) => (
+              <RepoMetricCard key={repo.name} repo={repo} index={i} />
+            ))}
+          </motion.div>
+        )}
+      </div>
+    </section>
   );
 }

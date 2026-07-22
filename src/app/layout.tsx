@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Comprehensive Proxy Analysis & Installation Guide",
-  description: "Interactive analysis of 10 open-source AI proxy repositories ranked for 8 GB RAM Ubuntu systems. GoZen, routatic-proxy, OWL-AGENT deep dives, comparative analysis, and step-by-step installation guide.",
+  description: "Discover which AI proxy fits YOUR setup. Live metrics, interactive comparison, and personalized recommendations for 10 open-source proxies on 8 GB RAM Ubuntu.",
   keywords: ["proxy analysis", "GoZen", "routatic-proxy", "OWL-AGENT", "AI proxy", "8GB RAM", "Ubuntu", "SMP v5.1"],
   authors: [{ name: "Z.ai" }],
   icons: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Comprehensive Proxy Analysis & Installation Guide",
-    description: "10 AI proxies ranked, deep-dived, and compared for 8 GB RAM Ubuntu",
+    description: "Discover which AI proxy fits YOUR setup — live metrics, interactive comparison, personalized recommendations",
     url: "https://chat.z.ai",
     siteName: "Z.ai",
     type: "website",
