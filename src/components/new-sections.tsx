@@ -22,7 +22,7 @@ import {
   unifiedStackConfig, gozenInstallSteps, owlInstallSteps, startupSequence,
   type InstallStep
 } from "@/lib/proxy-data";
-import { fadeUp, staggerContainer, staggerItem, scaleIn } from "@/lib/animations";
+import { fadeUp, staggerContainer, staggerItem, scaleIn, useReducedMotionSafe, makeVariants } from "@/lib/animations";
 import { palette, tw } from "@/lib/theme-tokens";
 import { type ProxyMonitorState, type RequestLogEntry } from "@/lib/proxy-monitor-types";
 import { useProxyStore } from "@/lib/store";
@@ -105,6 +105,7 @@ export function DarkModeToggle() {
   const setThemePreference = useProxyStore((s) => s.setThemePreference);
   const [showPanel, setShowPanel] = useState(false);
   const isDark = resolvedTheme === "dark";
+  const reduced = useReducedMotionSafe();
 
   const handleThemeToggle = useCallback(() => {
     const next = isDark ? "light" : "dark";
@@ -127,11 +128,11 @@ export function DarkModeToggle() {
       >
         <AnimatePresence mode="wait">
           {isDark ? (
-            <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+            <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={reduced ? { duration: 0 } : { duration: 0.2 }}>
               <Sun className="h-4 w-4 text-yellow-400" />
             </motion.div>
           ) : (
-            <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+            <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={reduced ? { duration: 0 } : { duration: 0.2 }}>
               <Moon className="h-4 w-4 text-primary" />
             </motion.div>
           )}
@@ -152,7 +153,7 @@ export function DarkModeToggle() {
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
+            transition={reduced ? { duration: 0 } : { duration: 0.2 }}
             className={`absolute right-0 top-12 z-50 w-64 ${tw.bgCard} ${tw.darkBgCard} border ${tw.borderBorder} ${tw.darkBorderBorder} rounded-xl shadow-xl p-4`}
           >
             <div className="flex items-center gap-2 mb-3">
@@ -282,6 +283,7 @@ function ComponentCard({ result, onInstall, isPreviewed, onPreview }: {
   onPreview: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const reduced = useReducedMotionSafe();
 
   const handleCopy = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -353,7 +355,7 @@ function ComponentCard({ result, onInstall, isPreviewed, onPreview }: {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.2 }}
               className="overflow-hidden"
             >
               <div className={`mt-3 pt-3 border-t ${tw.borderBorder} ${tw.darkBorderBorder}`}>
@@ -401,6 +403,8 @@ function ComponentCard({ result, onInstall, isPreviewed, onPreview }: {
 export function ComponentSearchSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const reduced = useReducedMotionSafe();
+  const variants = makeVariants(reduced);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -479,7 +483,7 @@ export function ComponentSearchSection() {
   return (
     <section ref={ref} id="components" className={`py-12 sm:py-20 ${tw.bgCard} ${tw.darkBgBg}`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+        <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
           <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
             <h2 className={`text-2xl sm:text-3xl font-bold ${tw.textHeader} ${tw.darkTextHeader}`}>Component Explorer</h2>
             <div className="flex items-center gap-2">
@@ -496,7 +500,7 @@ export function ComponentSearchSection() {
           </p>
         </motion.div>
 
-        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+        <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
           {/* Category Tabs */}
           <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
             {SEARCH_CATEGORIES.map((cat) => (
@@ -602,9 +606,9 @@ export function ComponentSearchSection() {
         )}
 
         {!initialLoading && (
-          <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <motion.div variants={variants.staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {results.map((result, i) => (
-              <motion.div key={`${result.component_data.component_slug}-${result.demo_id || i}`} variants={staggerItem}>
+              <motion.div key={`${result.component_data.component_slug}-${result.demo_id || i}`} variants={variants.staggerItem}>
                 <ComponentCard
                   result={result}
                   onInstall={handleInstall}
@@ -730,6 +734,8 @@ export function ConfigExportSection() {
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const reduced = useReducedMotionSafe();
+  const variants = makeVariants(reduced);
 
   const showToast = useCallback((message: string, type: "success" | "error" | "info" = "success") => {
     setToastMessage(message);
@@ -783,7 +789,7 @@ export function ConfigExportSection() {
 
   return (
     <>
-      <motion.div ref={ref} variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mt-8">
+      <motion.div ref={ref} variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"} className="mt-8">
         <Card className={`border-cascade-success/30 dark:border-cascade-success/20 ${tw.darkBgCard}`}>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between flex-wrap gap-2">
@@ -950,6 +956,8 @@ function ProxyDashboard({ proxy }: { proxy: ProxyMonitorState }) {
 export function MonitoringSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const reduced = useReducedMotionSafe();
+  const variants = makeVariants(reduced);
   const monitoringConnected = useProxyStore((s) => s.monitoringConnected);
   const setMonitoringConnected = useProxyStore((s) => s.setMonitoringConnected);
   const [dataSource, setDataSource] = useState<"websocket" | "http" | "simulated">("simulated");
@@ -1093,7 +1101,7 @@ export function MonitoringSection() {
   return (
     <section ref={ref} id="monitor" className={`py-12 sm:py-20 ${tw.bgBg} ${tw.darkBgBgDark}`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+        <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
           <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
             <h2 className={`text-2xl sm:text-3xl font-bold ${tw.textHeader} ${tw.darkTextHeader}`}>Live Monitoring</h2>
             <div className="flex items-center gap-2">
@@ -1159,14 +1167,14 @@ export function MonitoringSection() {
         )}
 
         {!initialLoading && (
-          <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 mt-6">
+          <motion.div variants={variants.staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 mt-6">
             {gozenState && (
-              <motion.div variants={staggerItem}>
+              <motion.div variants={variants.staggerItem}>
                 <ProxyDashboard proxy={gozenState} />
               </motion.div>
             )}
             {owlState && (
-              <motion.div variants={staggerItem}>
+              <motion.div variants={variants.staggerItem}>
                 <ProxyDashboard proxy={owlState} />
               </motion.div>
             )}
@@ -1175,7 +1183,7 @@ export function MonitoringSection() {
 
         {/* Combined RAM */}
         {gozenState && owlState && !initialLoading && (
-          <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
             <Card className={`${tw.bgCard} ${tw.darkBgCard} border ${tw.borderBorder} ${tw.darkBorderBorder} mb-6`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
@@ -1196,7 +1204,7 @@ export function MonitoringSection() {
         )}
 
         {/* Request Log */}
-        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+        <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
           <Card className={`${tw.bgCard} ${tw.darkBgCard} border ${tw.borderBorder} ${tw.darkBorderBorder}`}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
@@ -1289,6 +1297,8 @@ const RECOMMENDED_COMPONENTS = [
 export function ComponentInstallSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const reduced = useReducedMotionSafe();
+  const variants = makeVariants(reduced);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
@@ -1305,7 +1315,7 @@ export function ComponentInstallSection() {
   return (
     <section ref={ref} id="component-install" className={`py-12 sm:py-16 ${tw.bgCard} ${tw.darkBgBg}`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+        <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
           <div className="flex items-center gap-2 mb-2">
             <Package className={`h-6 w-6 ${tw.textInfo}`} />
             <h2 className={`text-2xl sm:text-3xl font-bold ${tw.textHeader} ${tw.darkTextHeader}`}>Recommended Components</h2>
@@ -1315,9 +1325,9 @@ export function ComponentInstallSection() {
           </p>
         </motion.div>
 
-        <motion.div variants={staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-3">
+        <motion.div variants={variants.staggerContainer} initial="hidden" animate={isInView ? "visible" : "hidden"} className="space-y-3">
           {RECOMMENDED_COMPONENTS.map((comp, i) => (
-            <motion.div key={comp.name} variants={staggerItem}>
+            <motion.div key={comp.name} variants={variants.staggerItem}>
               <Card className={`${tw.bgCard} ${tw.darkBgCard} border transition-colors ${
                 installed.has(comp.name) ? `border-cascade-success/40 dark:border-cascade-success/30` : `${tw.borderBorder} ${tw.darkBorderBorder}`
               }`}>
@@ -1365,7 +1375,7 @@ export function ComponentInstallSection() {
         </motion.div>
 
         {installed.size > 0 && (
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" className="mt-6">
+          <motion.div variants={variants.fadeUp} initial="hidden" animate="visible" className="mt-6">
             <Card className="bg-cascade-success/5 border-cascade-success/20 dark:bg-cascade-success/10">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
@@ -1531,6 +1541,8 @@ function getEstimatedTime(command: string): string {
 export function InstallationRunner() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const reduced = useReducedMotionSafe();
+  const variants = makeVariants(reduced);
   const installRunning = useProxyStore((s) => s.installRunning);
   const setInstallRunning = useProxyStore((s) => s.setInstallRunning);
   const completedSteps = useProxyStore((s) => s.completedSteps);
@@ -1636,12 +1648,12 @@ export function InstallationRunner() {
   const statusIcon = (status: StepStatus) => {
     switch (status) {
       case "success": return (
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 500, damping: 15 }}>
           <CheckCircle2 className={`h-5 w-5 ${tw.textSuccess}`} />
         </motion.div>
       );
       case "failed": return (
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 500, damping: 15 }}>
           <XCircle className={`h-5 w-5 ${tw.textError}`} />
         </motion.div>
       );
@@ -1655,7 +1667,7 @@ export function InstallationRunner() {
     <>
       <section ref={ref} id="install-runner" className={`py-12 sm:py-20 ${tw.bgBg} ${tw.darkBgBgDark}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
             <div className="flex items-center gap-2 mb-2">
               <Terminal className={`h-6 w-6 ${tw.textHeader} ${tw.darkTextHeader}`} />
               <h2 className={`text-2xl sm:text-3xl font-bold ${tw.textHeader} ${tw.darkTextHeader}`}>Run Installation</h2>
@@ -1665,7 +1677,7 @@ export function InstallationRunner() {
             </p>
           </motion.div>
 
-          <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+          <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
             {/* Mode Tabs */}
             <div className="flex gap-3 mb-6">
               <Button
@@ -1739,7 +1751,7 @@ export function InstallationRunner() {
                     key={step.step}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.03 }}
+                    transition={reduced ? { duration: 0 } : { delay: i * 0.03 }}
                     className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                       i === currentStepIdx ? `bg-cascade-info/5 dark:bg-cascade-info/10 border border-cascade-info/20` :
                       step.status === "success" ? "bg-cascade-success/5" :
@@ -1836,7 +1848,7 @@ export function InstallationRunner() {
                       <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 15 }}
                         className="text-cascade-success py-4 text-center font-semibold"
                       >
                         <CheckCircle2 className="h-6 w-6 mx-auto mb-2" />
@@ -1898,8 +1910,10 @@ function formatDaysAgo(days: number): string {
 }
 
 function RepoMetricCard({ repo, index }: { repo: RepoMetrics; index: number }) {
+  const reduced = useReducedMotionSafe();
+  const variants = makeVariants(reduced);
   return (
-    <motion.div variants={staggerItem}>
+    <motion.div variants={variants.staggerItem}>
       <Card className={`h-full border ${repo.isArchived ? "border-cascade-error/40 bg-cascade-error/5" : tw.borderBorder} ${tw.bgCard} transition-shadow hover:shadow-md`}>
         <CardHeader className="pb-2 pt-4 px-4">
           <div className="flex items-center justify-between gap-2">
@@ -1964,6 +1978,8 @@ function RepoMetricCard({ repo, index }: { repo: RepoMetrics; index: number }) {
 export function LiveMetricsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const reduced = useReducedMotionSafe();
+  const variants = makeVariants(reduced);
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortKey>("healthScore");
@@ -2004,14 +2020,14 @@ export function LiveMetricsSection() {
   return (
     <section id="live-metrics" ref={ref} className="py-12 sm:py-20 bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <motion.div variants={fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
+        <motion.div variants={variants.fadeUp} initial="hidden" animate={isInView ? "visible" : "hidden"}>
           <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-2">Live Proxy Repo Metrics</h2>
           <p className="text-muted-foreground mb-6 text-sm sm:text-base">Real-time GitHub data for all 10 proxy repositories</p>
         </motion.div>
 
         {/* Controls Row */}
         <motion.div
-          variants={fadeUp}
+          variants={variants.fadeUp}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
           className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6"
@@ -2079,7 +2095,7 @@ export function LiveMetricsSection() {
           </div>
         ) : (
           <motion.div
-            variants={staggerContainer}
+            variants={variants.staggerContainer}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
             className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4"

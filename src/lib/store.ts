@@ -33,7 +33,26 @@ interface ProxyStore {
   // Active section for scroll tracking
   activeSection: string;
   setActiveSection: (section: string) => void;
+
+  // Custom scoring weights — persisted so user preferences survive reloads
+  customWeights: {
+    memory: number;    // default 40
+    features: number;  // default 25
+    maintenance: number; // default 15
+    setup: number;     // default 10
+    uniqueValue: number; // default 10
+  };
+  setCustomWeights: (weights: ProxyStore["customWeights"]) => void;
+  resetCustomWeights: () => void;
 }
+
+export const DEFAULT_WEIGHTS = {
+  memory: 40,
+  features: 25,
+  maintenance: 15,
+  setup: 10,
+  uniqueValue: 10,
+};
 
 export const useProxyStore = create<ProxyStore>()(
   persist(
@@ -72,6 +91,10 @@ export const useProxyStore = create<ProxyStore>()(
 
       activeSection: "hero",
       setActiveSection: (section) => set({ activeSection: section }),
+
+      customWeights: { ...DEFAULT_WEIGHTS },
+      setCustomWeights: (weights) => set({ customWeights: weights }),
+      resetCustomWeights: () => set({ customWeights: { ...DEFAULT_WEIGHTS } }),
     }),
     {
       name: "proxy-analysis-store",
@@ -89,6 +112,7 @@ export const useProxyStore = create<ProxyStore>()(
         themePreference: state.themePreference,
         completedChecks: state.completedChecks,
         completedSteps: state.completedSteps,
+        customWeights: state.customWeights,
       }),
     }
   )
